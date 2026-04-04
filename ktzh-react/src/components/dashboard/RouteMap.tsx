@@ -1,5 +1,11 @@
-import type { Station } from '../../models/dashboard';
 import { useLocale } from '../../context/LocaleContext';
+
+export interface Station {
+  name: string;
+  distanceKm: number;
+  status: 'passed' | 'current' | 'upcoming';
+  speedLimit?: number;
+}
 
 interface RouteMapProps {
   stations: Station[];

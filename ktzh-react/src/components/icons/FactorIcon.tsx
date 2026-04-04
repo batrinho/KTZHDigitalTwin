@@ -1,7 +1,5 @@
-import type { HealthFactor } from '../../models/dashboard';
-
 interface FactorIconProps {
-  icon: HealthFactor['icon'];
+  icon: 'temp' | 'brake' | 'electrical';
 }
 
 export default function FactorIcon({ icon }: FactorIconProps) {

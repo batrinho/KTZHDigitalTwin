@@ -20,9 +20,13 @@ export default function AlertsPanel({ alerts }: AlertsPanelProps) {
         <span className="alerts-count">{alerts.length}</span>
       </div>
       <div className="alert-list">
-        {alerts.map(a => (
-          <div className={`alert-item alert-item--${a.severity}`} key={a.timestamp}>
+        {alerts.length === 0 && (
+          <div className="alert-empty">{t('noAlerts')}</div>
+        )}
+        {alerts.map((a, i) => (
+          <div className={`alert-item alert-item--${a.severity}`} key={`${a.timestamp}-${i}`}>
             <div className="alert-msg">{a.message}</div>
+            {a.recommendation && <div className="alert-rec">{a.recommendation}</div>}
             <div className="alert-time">{a.timestamp}</div>
           </div>
         ))}

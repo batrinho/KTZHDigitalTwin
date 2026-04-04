@@ -1,0 +1,67 @@
+.replay-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding: 20px 28px 32px;
+  box-sizing: border-box;
+}
+
+.replay-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 14px 20px;
+}
+
+.replay-ranges {
+  display: flex;
+  gap: 6px;
+}
+
+.replay-range-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.replay-range-btn:hover {
+  border-color: #3b82f6;
+  color: var(--color-text-primary);
+}
+
+.replay-range-btn--active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.replay-status {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-left: auto;
+}
+
+.replay-status--error {
+  color: #ef4444;
+}
+
+.replay-charts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.replay-charts .chart-box {
+  padding: 16px 20px;
+}
+
+.replay-charts .chart-svg {
+  width: 100%;
+  height: auto;
+}

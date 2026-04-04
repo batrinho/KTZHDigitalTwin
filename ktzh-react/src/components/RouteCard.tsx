@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import type { Route } from '../models/route';
-import { getHealthInfo, getProgressPercent } from '../models/route';
+import type { ApiRoute } from '../models/api';
+import { getHealthInfo, categoryToHealthInfo } from '../models/route';
 import TrainIcon from './icons/TrainIcon';
 import { useLocale } from '../context/LocaleContext';
 import './RouteCard.css';
@@ -12,45 +12,59 @@ const HEALTH_STATUS_KEY: Record<string, string> = {
 };
 
 interface RouteCardProps {
-  route: Route;
+  route: ApiRoute;
 }
 
 export default function RouteCard({ route }: RouteCardProps) {
   const navigate = useNavigate();
   const { t } = useLocale();
-  const progress = getProgressPercent(route.completedKm, route.totalKm);
-  const health = getHealthInfo(route.healthIndex);
+
+  const health = route.healthCategory
+    ? categoryToHealthInfo(route.healthCategory)
+    : getHealthInfo(route.healthScore);
+
+  const score = route.healthScore != null ? Math.round(route.healthScore) : '—';
 
   return (
-    <div className="card" onClick={() => navigate(`/dashboard/${route.id}`)}>
+    <div className="card" onClick={() => navigate(`/dashboard/${route.locomotiveId}`)}>
       <div className="card__info">
         <div className="card__route">
-          {route.from}
-          <span className="card__arrow">&rarr;</span>
-          {route.to}
+          {route.locomotiveId}
+          {route.locomotiveType && (
+            <span className="card__type">{route.locomotiveType}</span>
+          )}
         </div>
-        <div className="card__meta">{t('locomotive')} {route.locomotive}</div>
-        <div className="card__meta">{t('departure')} {route.departure}</div>
+        {route.routeId && (
+          <div className="card__meta">{t('routeLabel')} {route.routeId}</div>
+        )}
+        {route.phase && (
+          <div className="card__meta">{route.phase}</div>
+        )}
       </div>
 
-      <div className="card__progress-section">
-        <div className="progress-wrap">
-          <div className="train-anchor" style={{ left: `${progress}%` }}>
-            <TrainIcon className="train-icon" />
+      <div className="card__telemetry-section">
+        <div className="card__telemetry-row">
+          <TrainIcon className="train-icon" />
+          <div className="card__live-stats">
+            {route.speed != null && (
+              <span className="card__stat">
+                <strong>{Math.round(route.speed)}</strong> km/h
+              </span>
+            )}
+            {route.fuelLevel != null && (
+              <span className="card__stat">
+                <strong>{Math.round(route.fuelLevel)}</strong>% {t('fuel').toLowerCase()}
+              </span>
+            )}
           </div>
-          <div className="track">
-            <div className="track__fill" style={{ width: `${progress}%` }} />
+        </div>
+        {route.healthTrend && (
+          <div className="card__trend">
+            {route.healthTrend === 'IMPROVING' ? '↑' :
+             route.healthTrend === 'DEGRADING' ? '↓' : '→'}{' '}
+            {route.healthTrend.toLowerCase()}
           </div>
-        </div>
-
-        <div className="cities">
-          <span className="city">{route.from}</span>
-          <span className="city">{route.to}</span>
-        </div>
-
-        <div className="completed">
-          {t('completed')}&nbsp;<strong>{route.completedKm}&nbsp;km</strong>
-        </div>
+        )}
       </div>
 
       <div className="card__health">
@@ -58,7 +72,7 @@ export default function RouteCard({ route }: RouteCardProps) {
           className="health-badge"
           style={{ borderColor: health.color, color: health.color }}
         >
-          {route.healthIndex}
+          {score}
         </div>
         <div className="health-label">{t('healthIndex')}</div>
         <div className="health-status" style={{ color: health.color }}>

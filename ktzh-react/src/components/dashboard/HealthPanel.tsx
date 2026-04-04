@@ -1,15 +1,8 @@
-import type { HealthFactor } from '../../models/dashboard';
 import type { HealthInfo } from '../../models/route';
-import FactorIcon from '../icons/FactorIcon';
+import type { HealthFactor } from '../../models/api';
 import { useLocale } from '../../context/LocaleContext';
 
 const CIRC = 2 * Math.PI * 80;
-
-const FACTOR_KEY: Record<string, string> = {
-  temp: 'engineTemp',
-  brake: 'brakePressure',
-  electrical: 'electricalSystem',
-};
 
 const HEALTH_STATUS_KEY: Record<string, string> = {
   Normal: 'healthNormal',
@@ -18,14 +11,15 @@ const HEALTH_STATUS_KEY: Record<string, string> = {
 };
 
 interface HealthPanelProps {
-  healthIndex: number;
+  healthIndex: number | null;
   healthInfo: HealthInfo;
   healthFactors: HealthFactor[];
 }
 
 export default function HealthPanel({ healthIndex, healthInfo, healthFactors }: HealthPanelProps) {
   const { t } = useLocale();
-  const fill = (healthIndex / 100) * CIRC;
+  const idx = healthIndex ?? 0;
+  const fill = (idx / 100) * CIRC;
   const gaugeDash = `${fill} ${CIRC}`;
   const statusLabel = t(HEALTH_STATUS_KEY[healthInfo.status] ?? healthInfo.status);
 
@@ -43,7 +37,7 @@ export default function HealthPanel({ healthIndex, healthInfo, healthFactors }: 
               transform="rotate(-90 100 100)" />
             <text x="100" y="95" textAnchor="middle" dominantBaseline="central"
               fill="#e2e8f0" fontSize="52" fontWeight="700">
-              {healthIndex}
+              {healthIndex != null ? healthIndex : '—'}
             </text>
             <text x="100" y="130" textAnchor="middle"
               fill={healthInfo.color} fontSize="16" fontWeight="500">
@@ -54,17 +48,27 @@ export default function HealthPanel({ healthIndex, healthInfo, healthFactors }: 
 
         <div className="factors">
           <h3 className="panel__label">{t('systemHealthIndex')}</h3>
-          <p className="factors__title">{t('topFactors')}</p>
-          {healthFactors.map(f => (
-            <div className="factor-row" key={f.name}>
-              <span className="factor-icon"><FactorIcon icon={f.icon} /></span>
-              <span className="factor-name">{t(FACTOR_KEY[f.icon] ?? f.name)}</span>
-              <div className="factor-bar">
-                <div className="factor-bar__fill" style={{ width: `${f.value}%`, background: f.color }} />
-              </div>
-              <span className="factor-val" style={{ color: f.color }}>{f.value}%</span>
-            </div>
-          ))}
+          {healthFactors.length > 0 && (
+            <>
+              <p className="factors__title">{t('topFactors')}</p>
+              {healthFactors.map(f => (
+                <div className="factor-row" key={f.name}>
+                  <span className="factor-name">{f.name}</span>
+                  <div className="factor-bar">
+                    <div
+                      className="factor-bar__fill"
+                      style={{
+                        width: `${f.value}%`,
+                        background: f.category === 'CRITICAL' ? '#ef4444' :
+                                    f.category === 'ATTENTION' ? '#eab308' : '#22c55e',
+                      }}
+                    />
+                  </div>
+                  <span className="factor-val">{f.value}%</span>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       </div>
     </div>

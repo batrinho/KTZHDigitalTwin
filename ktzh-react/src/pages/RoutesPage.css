@@ -6,6 +6,17 @@
   transition: background-color 0.2s ease;
 }
 
+.page-status {
+  text-align: center;
+  padding: 48px 20px;
+  font-size: 15px;
+  color: var(--color-text-muted);
+}
+
+.page-status--error {
+  color: #ef4444;
+}
+
 .route-list {
   display: flex;
   flex-direction: column;
