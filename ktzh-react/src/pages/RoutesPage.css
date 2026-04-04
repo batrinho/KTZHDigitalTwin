@@ -1,0 +1,53 @@
+.page {
+  min-height: 100vh;
+  background: #13141f;
+  padding: 28px 32px;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.header__heading {
+  font-size: 26px;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin: 0 0 4px 0;
+}
+
+.header__sub {
+  font-size: 14px;
+  color: #475569;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.header__count {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #1c1e2e;
+  border: 1px solid #2a2d3e;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.route-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
