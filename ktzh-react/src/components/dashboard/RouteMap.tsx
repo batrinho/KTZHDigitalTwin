@@ -1,4 +1,5 @@
 import type { Station } from '../../models/dashboard';
+import { useLocale } from '../../context/LocaleContext';
 
 interface RouteMapProps {
   stations: Station[];
@@ -7,9 +8,11 @@ interface RouteMapProps {
 }
 
 export default function RouteMap({ stations, progressPercent, remainingKm }: RouteMapProps) {
+  const { t } = useLocale();
+
   return (
     <div className="panel route-map-panel">
-      <h3 className="panel__label" style={{ marginBottom: 16 }}>ROUTE MAP</h3>
+      <h3 className="panel__label" style={{ marginBottom: 16 }}>{t('routeMap')}</h3>
 
       <div className="timeline">
         {stations.map((s, i) => (
@@ -22,10 +25,10 @@ export default function RouteMap({ stations, progressPercent, remainingKm }: Rou
               <span className="tl-name">{s.name}</span>
               <span className="tl-km">{s.distanceKm} km</span>
               {s.status === 'current' && (
-                <span className="tl-badge tl-badge--current">CURRENT</span>
+                <span className="tl-badge tl-badge--current">{t('currentStation')}</span>
               )}
               {s.speedLimit && (
-                <span className="tl-badge tl-badge--speed">{s.speedLimit} km/h limit</span>
+                <span className="tl-badge tl-badge--speed">{s.speedLimit} {t('kmhLimit')}</span>
               )}
             </div>
           </div>
@@ -34,11 +37,11 @@ export default function RouteMap({ stations, progressPercent, remainingKm }: Rou
 
       <div className="route-progress">
         <div>
-          <span className="rp-label">Progress</span>
+          <span className="rp-label">{t('progress')}</span>
           <span className="rp-value">{progressPercent}%</span>
         </div>
         <div>
-          <span className="rp-label">Remaining</span>
+          <span className="rp-label">{t('remaining')}</span>
           <span className="rp-value">{remainingKm} <small>km</small></span>
         </div>
       </div>

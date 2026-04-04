@@ -2,7 +2,14 @@ import { useNavigate } from 'react-router-dom';
 import type { Route } from '../models/route';
 import { getHealthInfo, getProgressPercent } from '../models/route';
 import TrainIcon from './icons/TrainIcon';
+import { useLocale } from '../context/LocaleContext';
 import './RouteCard.css';
+
+const HEALTH_STATUS_KEY: Record<string, string> = {
+  Normal: 'healthNormal',
+  Caution: 'healthCaution',
+  Critical: 'healthCritical',
+};
 
 interface RouteCardProps {
   route: Route;
@@ -10,6 +17,7 @@ interface RouteCardProps {
 
 export default function RouteCard({ route }: RouteCardProps) {
   const navigate = useNavigate();
+  const { t } = useLocale();
   const progress = getProgressPercent(route.completedKm, route.totalKm);
   const health = getHealthInfo(route.healthIndex);
 
@@ -21,8 +29,8 @@ export default function RouteCard({ route }: RouteCardProps) {
           <span className="card__arrow">&rarr;</span>
           {route.to}
         </div>
-        <div className="card__meta">Locomotive {route.locomotive}</div>
-        <div className="card__meta">Departure {route.departure}</div>
+        <div className="card__meta">{t('locomotive')} {route.locomotive}</div>
+        <div className="card__meta">{t('departure')} {route.departure}</div>
       </div>
 
       <div className="card__progress-section">
@@ -41,7 +49,7 @@ export default function RouteCard({ route }: RouteCardProps) {
         </div>
 
         <div className="completed">
-          Completed:&nbsp;<strong>{route.completedKm}&nbsp;km</strong>
+          {t('completed')}&nbsp;<strong>{route.completedKm}&nbsp;km</strong>
         </div>
       </div>
 
@@ -52,9 +60,9 @@ export default function RouteCard({ route }: RouteCardProps) {
         >
           {route.healthIndex}
         </div>
-        <div className="health-label">Health Index</div>
+        <div className="health-label">{t('healthIndex')}</div>
         <div className="health-status" style={{ color: health.color }}>
-          {health.status}
+          {t(HEALTH_STATUS_KEY[health.status] ?? health.status)}
         </div>
       </div>
     </div>

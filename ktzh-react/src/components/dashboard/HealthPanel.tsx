@@ -1,8 +1,21 @@
 import type { HealthFactor } from '../../models/dashboard';
 import type { HealthInfo } from '../../models/route';
 import FactorIcon from '../icons/FactorIcon';
+import { useLocale } from '../../context/LocaleContext';
 
 const CIRC = 2 * Math.PI * 80;
+
+const FACTOR_KEY: Record<string, string> = {
+  temp: 'engineTemp',
+  brake: 'brakePressure',
+  electrical: 'electricalSystem',
+};
+
+const HEALTH_STATUS_KEY: Record<string, string> = {
+  Normal: 'healthNormal',
+  Caution: 'healthCaution',
+  Critical: 'healthCritical',
+};
 
 interface HealthPanelProps {
   healthIndex: number;
@@ -11,8 +24,10 @@ interface HealthPanelProps {
 }
 
 export default function HealthPanel({ healthIndex, healthInfo, healthFactors }: HealthPanelProps) {
+  const { t } = useLocale();
   const fill = (healthIndex / 100) * CIRC;
   const gaugeDash = `${fill} ${CIRC}`;
+  const statusLabel = t(HEALTH_STATUS_KEY[healthInfo.status] ?? healthInfo.status);
 
   return (
     <div className="panel health-panel">
@@ -32,18 +47,18 @@ export default function HealthPanel({ healthIndex, healthInfo, healthFactors }: 
             </text>
             <text x="100" y="130" textAnchor="middle"
               fill={healthInfo.color} fontSize="16" fontWeight="500">
-              {healthInfo.status}
+              {statusLabel}
             </text>
           </svg>
         </div>
 
         <div className="factors">
-          <h3 className="panel__label">SYSTEM HEALTH INDEX</h3>
-          <p className="factors__title">TOP CONTRIBUTING FACTORS</p>
+          <h3 className="panel__label">{t('systemHealthIndex')}</h3>
+          <p className="factors__title">{t('topFactors')}</p>
           {healthFactors.map(f => (
             <div className="factor-row" key={f.name}>
               <span className="factor-icon"><FactorIcon icon={f.icon} /></span>
-              <span className="factor-name">{f.name}</span>
+              <span className="factor-name">{t(FACTOR_KEY[f.icon] ?? f.name)}</span>
               <div className="factor-bar">
                 <div className="factor-bar__fill" style={{ width: `${f.value}%`, background: f.color }} />
               </div>

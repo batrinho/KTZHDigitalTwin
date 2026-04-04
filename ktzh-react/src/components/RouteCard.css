@@ -2,15 +2,16 @@
   display: flex;
   align-items: center;
   gap: 24px;
-  background: #1c1e2e;
-  border: 1px solid #2a2d3e;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 20px 24px;
   cursor: pointer;
   transition:
-    border-color 0.22s ease,
-    box-shadow   0.22s ease,
-    transform    0.18s ease;
+    border-color    0.22s ease,
+    box-shadow      0.22s ease,
+    transform       0.18s ease,
+    background-color 0.2s ease;
   will-change: transform;
 }
 
@@ -27,7 +28,7 @@
 .card__route {
   font-size: 17px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--color-text-primary);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -38,7 +39,7 @@
 
 .card__meta {
   font-size: 13px;
-  color: #64748b;
+  color: var(--color-text-muted);
   line-height: 1.6;
 }
 
@@ -65,7 +66,7 @@
 
 .track {
   height: 4px;
-  background: #2a2d3e;
+  background: var(--color-border);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -83,16 +84,16 @@
   margin-top: 6px;
 }
 
-.city { font-size: 12px; color: #475569; }
+.city { font-size: 12px; color: var(--color-text-faint); }
 
 .completed {
   margin-top: 8px;
   font-size: 13px;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .completed strong {
-  color: #94a3b8;
+  color: var(--color-text-secondary);
   font-weight: 600;
 }
 
@@ -118,7 +119,7 @@
 
 .health-label {
   font-size: 11px;
-  color: #475569;
+  color: var(--color-text-faint);
   text-align: center;
 }
 
