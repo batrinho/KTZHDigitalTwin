@@ -31,3 +31,7 @@ export {
 
 // History / replay
 export { fetchHistory, exportCsv } from './history';
+
+// Alerts (active alerts for a locomotive)
+export { fetchActiveAlerts } from './alerts';
+export type { ActiveAlert } from './alerts';
