@@ -4,11 +4,12 @@ import { useLocale } from '../../context/LocaleContext';
 
 interface TopBarProps {
   locomotiveId: string;
-  routeFrom: string;
-  routeTo: string;
+  locomotiveType: string | null;
+  routeId: string | null;
+  connected: boolean;
 }
 
-export default function TopBar({ locomotiveId, routeFrom, routeTo }: TopBarProps) {
+export default function TopBar({ locomotiveId, locomotiveType, routeId, connected }: TopBarProps) {
   const { t } = useLocale();
 
   return (
@@ -18,18 +19,23 @@ export default function TopBar({ locomotiveId, routeFrom, routeTo }: TopBarProps
         <div>
           <span className="topbar__loco">
             {t('locomotive')} <strong>{locomotiveId}</strong>
+            {locomotiveType && (
+              <span className="topbar__loco-type"> ({locomotiveType})</span>
+            )}
           </span>
-          <span className="topbar__route">
-            {t('routeLabel')} {routeFrom} &rarr; {routeTo}
-          </span>
+          {routeId && (
+            <span className="topbar__route">
+              {t('routeLabel')} {routeId}
+            </span>
+          )}
         </div>
       </div>
 
       <div className="topbar__right">
-        <span className="live-pill">
+        <span className={`live-pill${connected ? '' : ' live-pill--off'}`}>
           <WifiIcon />
-          LIVE
-          <span className="live-dot" />
+          {connected ? 'LIVE' : 'OFFLINE'}
+          <span className={connected ? 'live-dot' : 'live-dot live-dot--off'} />
         </span>
       </div>
     </header>

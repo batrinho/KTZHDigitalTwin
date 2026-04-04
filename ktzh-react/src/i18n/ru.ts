@@ -7,6 +7,7 @@ const ru: Record<string, string> = {
 
   /* ── Navigation ──────────────────────────────── */
   backToRoutes: '\u2190 Назад к маршрутам',
+  backToDashboard: '\u2190 Назад к панели',
   viewReplay: 'Просмотр повтора / История',
 
   /* ── TopBar / Header ─────────────────────────── */
@@ -48,6 +49,7 @@ const ru: Record<string, string> = {
 
   /* ── Alerts ──────────────────────────────────── */
   alerts: 'ОПОВЕЩЕНИЯ',
+  noAlerts: 'Нет оповещений',
 
   /* ── Route map ───────────────────────────────── */
   routeMap: 'КАРТА МАРШРУТА',
@@ -57,7 +59,7 @@ const ru: Record<string, string> = {
   remaining: 'Осталось',
 
   /* ── Telemetry ───────────────────────────────── */
-  telemetryHeading: 'ТЕЛЕМЕТРИЯ В РЕАЛЬНОМ ВРЕМЕНИ \u2014 ПОСЛЕДНИЕ 10 МИНУТ',
+  telemetryHeading: 'ТЕЛЕМЕТРИЯ В РЕАЛЬНОМ ВРЕМЕНИ',
   chartSpeed: 'СКОРОСТЬ (км/ч)',
   chartTemp: 'ТЕМПЕРАТУРА (\u00B0C)',
   chartElectrical: 'ЭЛЕКТРИЧЕСКАЯ СИСТЕМА',
@@ -65,6 +67,14 @@ const ru: Record<string, string> = {
   /* ── RouteCard ───────────────────────────────── */
   departure: 'Отправление',
   completed: 'Пройдено:',
+
+  /* ── Replay ──────────────────────────────────── */
+  replay: 'Повтор / История',
+  exportData: 'Экспорт данных',
+  dataPoints: 'точек данных',
+
+  /* ── Status ──────────────────────────────────── */
+  loading: 'Загрузка',
 };
 
 export default ru;

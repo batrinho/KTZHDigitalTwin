@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { buildPath } from '../../utils/svg';
 import { useLocale } from '../../context/LocaleContext';
+import type { RingBuffer } from '../../hooks/useRingBuffer';
 
 interface ChartConfig {
   label: string;
@@ -12,6 +13,7 @@ interface ChartConfig {
 }
 
 const X0 = 30, Y0 = 10, W = 260, H = 100;
+const DISPLAY_POINTS = 120;
 
 interface HoverState {
   svgX: number;
@@ -41,7 +43,7 @@ function Chart({ config }: { config: ChartConfig }) {
 
   const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
     const svg = svgRef.current;
-    if (!svg) return;
+    if (!svg || config.data.length < 2) return;
     const rect = svg.getBoundingClientRect();
     const rawSvgX = ((e.clientX - rect.left) / rect.width) * 300;
     const svgX = Math.max(X0, Math.min(X0 + W, rawSvgX));
@@ -68,12 +70,14 @@ function Chart({ config }: { config: ChartConfig }) {
         ref={svgRef}
         viewBox="0 0 300 120"
         className="chart-svg"
-        style={{ cursor: 'crosshair' }}
+        style={{ cursor: config.data.length > 1 ? 'crosshair' : 'default' }}
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setHover(null)}
       >
         <ChartGrid labels={config.gridLabels} />
-        <path d={path} fill="none" stroke={config.strokeColor} strokeWidth="1.5" />
+        {config.data.length > 1 && (
+          <path d={path} fill="none" stroke={config.strokeColor} strokeWidth="1.5" />
+        )}
 
         {hover && (
           <>
@@ -120,62 +124,50 @@ function Chart({ config }: { config: ChartConfig }) {
 }
 
 interface TelemetryPanelProps {
-  speedTelemetry: number[];
-  tempTelemetry: number[];
-  electricalTelemetry: number[];
+  buffer: RingBuffer;
 }
 
-export default function TelemetryPanel({ speedTelemetry, tempTelemetry, electricalTelemetry }: TelemetryPanelProps) {
+export default function TelemetryPanel({ buffer }: TelemetryPanelProps) {
   const { t } = useLocale();
 
-  const charts: ChartConfig[] = [
-    {
-      label: t('chartSpeed'),
-      data: speedTelemetry,
-      min: 0,
-      max: 120,
-      gridLabels: ['120', '90', '60', '30', '0'],
-      strokeColor: '#3b82f6',
-    },
-    {
-      label: t('chartTemp'),
-      data: tempTelemetry,
-      min: 0,
-      max: 120,
-      gridLabels: ['120', '90', '60', '30', '0'],
-      strokeColor: '#3b82f6',
-    },
-    {
-      label: t('chartElectrical'),
-      data: electricalTelemetry,
-      min: 0,
-      max: 28,
-      gridLabels: ['28', '21', '14', '7', '0'],
-      strokeColor: '#eab308',
-    },
-  ];
+  const charts: ChartConfig[] = useMemo(() => {
+    const speedData = buffer.extractField('speed', DISPLAY_POINTS);
+    const tempData = buffer.extractField('coolant_temp', DISPLAY_POINTS);
+    const voltData = buffer.extractField('voltage', DISPLAY_POINTS);
+
+    return [
+      {
+        label: t('chartSpeed'),
+        data: speedData,
+        min: 0,
+        max: 120,
+        gridLabels: ['120', '90', '60', '30', '0'],
+        strokeColor: '#3b82f6',
+      },
+      {
+        label: t('chartTemp'),
+        data: tempData,
+        min: 0,
+        max: 120,
+        gridLabels: ['120', '90', '60', '30', '0'],
+        strokeColor: '#3b82f6',
+      },
+      {
+        label: t('chartElectrical'),
+        data: voltData,
+        min: 0,
+        max: 28,
+        gridLabels: ['28', '21', '14', '7', '0'],
+        strokeColor: '#eab308',
+      },
+    ];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buffer.length, t]);
 
   return (
     <div className="panel telemetry-panel">
       <div className="telemetry-head">
         <span className="panel__label">{t('telemetryHeading')}</span>
-        <div className="zoom-btns">
-          <button className="btn-icon" aria-label="Zoom in">
-            <svg width="16" height="16" viewBox="0 0 16 16">
-              <circle cx="7" cy="7" r="5" stroke="#94a3b8" strokeWidth="1.2" fill="none" />
-              <line x1="11" y1="11" x2="14" y2="14" stroke="#94a3b8" strokeWidth="1.2" strokeLinecap="round" />
-              <line x1="5" y1="7" x2="9" y2="7" stroke="#94a3b8" strokeWidth="1" strokeLinecap="round" />
-              <line x1="7" y1="5" x2="7" y2="9" stroke="#94a3b8" strokeWidth="1" strokeLinecap="round" />
-            </svg>
-          </button>
-          <button className="btn-icon" aria-label="Zoom out">
-            <svg width="16" height="16" viewBox="0 0 16 16">
-              <circle cx="7" cy="7" r="5" stroke="#94a3b8" strokeWidth="1.2" fill="none" />
-              <line x1="11" y1="11" x2="14" y2="14" stroke="#94a3b8" strokeWidth="1.2" strokeLinecap="round" />
-              <line x1="5" y1="7" x2="9" y2="7" stroke="#94a3b8" strokeWidth="1" strokeLinecap="round" />
-            </svg>
-          </button>
-        </div>
       </div>
       <div className="charts-row">
         {charts.map(c => (

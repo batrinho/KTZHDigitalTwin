@@ -7,6 +7,7 @@ const en: Record<string, string> = {
 
   /* ── Navigation ──────────────────────────────── */
   backToRoutes: '\u2190 Back to Routes',
+  backToDashboard: '\u2190 Back to Dashboard',
   viewReplay: 'View Replay / History',
 
   /* ── TopBar / Header ─────────────────────────── */
@@ -48,6 +49,7 @@ const en: Record<string, string> = {
 
   /* ── Alerts ──────────────────────────────────── */
   alerts: 'ALERTS',
+  noAlerts: 'No alerts',
 
   /* ── Route map ───────────────────────────────── */
   routeMap: 'ROUTE MAP',
@@ -57,7 +59,7 @@ const en: Record<string, string> = {
   remaining: 'Remaining',
 
   /* ── Telemetry ───────────────────────────────── */
-  telemetryHeading: 'REAL-TIME TELEMETRY \u2014 LAST 10 MINUTES',
+  telemetryHeading: 'REAL-TIME TELEMETRY',
   chartSpeed: 'SPEED (km/h)',
   chartTemp: 'TEMPERATURE (\u00B0C)',
   chartElectrical: 'ELECTRICAL SYSTEM',
@@ -65,6 +67,14 @@ const en: Record<string, string> = {
   /* ── RouteCard ───────────────────────────────── */
   departure: 'Departure',
   completed: 'Completed:',
+
+  /* ── Replay ──────────────────────────────────── */
+  replay: 'Replay / History',
+  exportData: 'Export Data',
+  dataPoints: 'data points',
+
+  /* ── Status ──────────────────────────────────── */
+  loading: 'Loading',
 };
 
 export default en;

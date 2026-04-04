@@ -1,21 +1,33 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { DUMMY_DASHBOARD } from '../data/dashboard';
-import { getHealthInfo } from '../models/route';
+import { useTelemetryWs } from '../hooks/useTelemetryWs';
+import { categoryToHealthInfo } from '../models/route';
 import AppHeader from '../components/AppHeader';
 import TopBar from '../components/dashboard/TopBar';
 import HealthPanel from '../components/dashboard/HealthPanel';
 import AlertsPanel from '../components/dashboard/AlertsPanel';
-import RouteMap from '../components/dashboard/RouteMap';
 import TelemetryPanel from '../components/dashboard/TelemetryPanel';
 import { useLocale } from '../context/LocaleContext';
 import './DashboardPage.css';
 
 export default function DashboardPage() {
-  const { id: _routeId } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useLocale();
-  const d = DUMMY_DASHBOARD;
-  const healthInfo = getHealthInfo(d.healthIndex);
+
+  const {
+    connected,
+    locomotiveType,
+    routeId,
+    telemetry,
+    healthScore,
+    healthCategory,
+    healthFactors,
+    alerts,
+    buffer,
+  } = useTelemetryWs(id);
+
+  const healthInfo = categoryToHealthInfo(healthCategory);
+  const p = telemetry;
 
   return (
     <div className="dashboard">
@@ -25,17 +37,27 @@ export default function DashboardPage() {
         <button className="btn btn--ghost" onClick={() => navigate('/')}>
           {t('backToRoutes')}
         </button>
-        <button className="btn btn--outline">{t('viewReplay')}</button>
+        <button
+          className="btn btn--outline"
+          onClick={() => navigate(`/replay/${id}`)}
+        >
+          {t('viewReplay')}
+        </button>
       </div>
 
-      <TopBar locomotiveId={d.locomotiveId} routeFrom={d.routeFrom} routeTo={d.routeTo} />
+      <TopBar
+        locomotiveId={id ?? '—'}
+        locomotiveType={locomotiveType}
+        routeId={routeId}
+        connected={connected}
+      />
 
       <div className="main-grid">
         <div className="main-left">
           <HealthPanel
-            healthIndex={d.healthIndex}
+            healthIndex={healthScore != null ? Math.round(healthScore) : null}
             healthInfo={healthInfo}
-            healthFactors={d.healthFactors}
+            healthFactors={healthFactors}
           />
 
           <div className="metrics-row">
@@ -45,14 +67,11 @@ export default function DashboardPage() {
                 <span className="metric-card__label">{t('speed')}</span>
                 <span className="metric-card__unit">km/h</span>
               </div>
-              <div className="metric-card__value">{d.speed}</div>
+              <div className="metric-card__value">{p.speed != null ? Math.round(p.speed) : '—'}</div>
               <div className="bar-thin bar-thin--yellow">
-                <div className="bar-thin__fill" style={{ width: `${(d.speed / d.maxSpeed) * 100}%` }} />
+                <div className="bar-thin__fill" style={{ width: `${((p.speed ?? 0) / 120) * 100}%` }} />
               </div>
-              <div className="bar-labels">
-                <span>0</span>
-                <span>{d.maxSpeed}</span>
-              </div>
+              <div className="bar-labels"><span>0</span><span>120</span></div>
             </div>
 
             <div className="panel metric-card">
@@ -61,10 +80,12 @@ export default function DashboardPage() {
                 <span className="metric-card__label">{t('fuel')}</span>
                 <span className="metric-card__unit">%</span>
               </div>
-              <div className="metric-card__value">{d.fuelPercent}</div>
-              <div className="metric-card__sub">{t('consumption')} {d.fuelConsumption} {t('lPerMin')}</div>
+              <div className="metric-card__value">{p.fuel_level != null ? Math.round(p.fuel_level) : '—'}</div>
+              {p.fuel_consumption != null && (
+                <div className="metric-card__sub">{t('consumption')} {p.fuel_consumption.toFixed(1)} {t('lPerMin')}</div>
+              )}
               <div className="bar-thin bar-thin--blue">
-                <div className="bar-thin__fill" style={{ width: `${d.fuelPercent}%` }} />
+                <div className="bar-thin__fill" style={{ width: `${p.fuel_level ?? 0}%` }} />
               </div>
             </div>
 
@@ -77,16 +98,16 @@ export default function DashboardPage() {
               <div className="pressure-grid">
                 <div>
                   <span className="pressure-sublabel">{t('mainReservoir')}</span>
-                  <span className="pressure-val pressure-val--green">{d.pressureMain}</span>
+                  <span className="pressure-val pressure-val--green">{p.main_reservoir_pressure?.toFixed(2) ?? '—'}</span>
                 </div>
                 <div className="pressure-pair">
                   <div>
                     <span className="pressure-sublabel">{t('brake')}</span>
-                    <span className="pressure-val">{d.pressureBrake}</span>
+                    <span className="pressure-val">{p.brake_pressure?.toFixed(2) ?? '—'}</span>
                   </div>
                   <div>
                     <span className="pressure-sublabel">{t('oil')}</span>
-                    <span className="pressure-val">{d.pressureOil}</span>
+                    <span className="pressure-val">{p.oil_pressure?.toFixed(2) ?? '—'}</span>
                   </div>
                 </div>
               </div>
@@ -103,15 +124,15 @@ export default function DashboardPage() {
               <div className="temp-rows">
                 <div className="temp-row">
                   <span>{t('engine')}</span>
-                  <span className="temp-val">{d.tempEngine}&deg;</span>
+                  <span className="temp-val">{p.engine_temp != null ? `${Math.round(p.engine_temp)}°` : '—'}</span>
                 </div>
                 <div className="temp-row">
                   <span>{t('brakes')}</span>
-                  <span className="temp-val">{d.tempBrakes}&deg;</span>
+                  <span className="temp-val">{p.brake_temp != null ? `${Math.round(p.brake_temp)}°` : '—'}</span>
                 </div>
                 <div className="temp-row">
                   <span>{t('coolant')}</span>
-                  <span className="temp-val temp-val--hot">{d.tempCoolant}&deg;</span>
+                  <span className="temp-val temp-val--hot">{p.coolant_temp != null ? `${Math.round(p.coolant_temp)}°` : '—'}</span>
                 </div>
               </div>
             </div>
@@ -124,37 +145,29 @@ export default function DashboardPage() {
               <div className="elec-grid">
                 <div>
                   <span className="elec-sublabel">{t('voltage')}</span>
-                  <span className="elec-val elec-val--yellow">{d.voltage} <small>kV</small></span>
+                  <span className="elec-val elec-val--yellow">{p.voltage?.toFixed(1) ?? '—'} <small>kV</small></span>
                 </div>
                 <div className="elec-pair">
                   <div>
                     <span className="elec-sublabel">{t('current')}</span>
-                    <span className="elec-val">{d.currentAmps} <small>A</small></span>
+                    <span className="elec-val">{p.current != null ? Math.round(p.current) : '—'} <small>A</small></span>
                   </div>
                   <div>
                     <span className="elec-sublabel">{t('power')}</span>
-                    <span className="elec-val">{d.power} <small>MW</small></span>
+                    <span className="elec-val">{p.power?.toFixed(1) ?? '—'} <small>MW</small></span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <AlertsPanel alerts={d.alerts} />
+          <AlertsPanel alerts={alerts} />
         </div>
 
-        <RouteMap
-          stations={d.stations}
-          progressPercent={d.progressPercent}
-          remainingKm={d.remainingKm}
-        />
+        {/* RouteMap removed — no longer hardcoded stations */}
       </div>
 
-      <TelemetryPanel
-        speedTelemetry={d.speedTelemetry}
-        tempTelemetry={d.tempTelemetry}
-        electricalTelemetry={d.electricalTelemetry}
-      />
+      <TelemetryPanel buffer={buffer} />
     </div>
   );
 }

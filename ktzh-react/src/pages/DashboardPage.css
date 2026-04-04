@@ -67,6 +67,12 @@
   margin-top: 2px;
 }
 
+.topbar__loco-type {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
 .topbar__right {
   display: flex;
   align-items: center;
@@ -81,6 +87,15 @@
   font-weight: 600;
   color: #22c55e;
   letter-spacing: 0.5px;
+}
+
+.live-pill--off {
+  color: #94a3b8;
+}
+
+.live-dot--off {
+  background: #94a3b8;
+  animation: none;
 }
 
 .topbar__icon {
@@ -338,7 +353,9 @@
 .alert-item--info     { border-left-color: #22c55e; }
 
 .alert-msg  { font-size: 13px; color: var(--color-text-primary); }
+.alert-rec  { font-size: 12px; color: var(--color-text-muted); margin-top: 2px; }
 .alert-time { font-size: 11px; color: var(--color-text-faint); margin-top: 2px; }
+.alert-empty { font-size: 13px; color: var(--color-text-muted); padding: 8px 0; }
 
 /* ── Route map ───────────────────────────────────────────── */
 .route-map-panel {
