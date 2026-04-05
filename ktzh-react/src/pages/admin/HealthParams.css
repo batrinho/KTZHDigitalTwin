@@ -1,0 +1,323 @@
+/* ── Header ──────────────────────────────────────────────── */
+.hp-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.hp-add-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Category cards ──────────────────────────────────────── */
+.hp-cats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.hp-cat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px;
+  transition: border-color 0.18s ease;
+}
+
+.hp-cat-card:hover {
+  border-color: #3b82f640;
+}
+
+.hp-cat-card__icon {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.hp-cat-card__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 4px;
+}
+
+.hp-cat-card__count {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.hp-cat-card__active {
+  font-size: 11px;
+  color: var(--color-text-faint);
+  margin-top: 2px;
+}
+
+/* ── Add/Edit form ───────────────────────────────────────── */
+.hp-form {
+  margin-bottom: 16px;
+}
+
+.hp-form__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 16px;
+}
+
+.hp-form__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.hp-form__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* ── Delete confirm overlay ──────────────────────────────── */
+.hp-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.hp-confirm {
+  width: 380px;
+}
+
+.hp-confirm__title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+.hp-confirm__desc {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-bottom: 20px;
+}
+
+.hp-confirm__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-danger {
+  padding: 9px 20px;
+  border-radius: 9px;
+  border: none;
+  background: #ef4444;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.btn-danger:hover { background: #dc2626; }
+.btn-danger:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Toolbar (search + refresh) ──────────────────────────── */
+.hp-toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.hp-search-wrap {
+  flex: 1;
+  position: relative;
+}
+
+.hp-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-faint);
+  pointer-events: none;
+}
+
+.hp-search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px 10px 38px;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  color: var(--color-text-primary);
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.18s ease;
+}
+.hp-search:focus { border-color: #3b82f6; }
+.hp-search::placeholder { color: var(--color-text-faint); }
+
+.hp-refresh {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+/* ── Table card ──────────────────────────────────────────── */
+.hp-table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.hp-loading {
+  color: var(--color-text-muted);
+  font-size: 13px;
+  padding: 32px 20px;
+  text-align: center;
+}
+
+/* ── Table ───────────────────────────────────────────────── */
+.hp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.hp-table thead tr {
+  background: var(--color-surface-inset);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.hp-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.hp-row {
+  border-bottom: 1px solid var(--color-border);
+  transition: background 0.15s ease;
+}
+.hp-row:last-child { border-bottom: none; }
+.hp-row:hover { background: var(--color-surface-inset); }
+
+.hp-cell {
+  padding: 14px 16px;
+  color: var(--color-text-secondary);
+  vertical-align: middle;
+}
+
+.hp-cell--param {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hp-param-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.hp-param-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+
+.hp-param-key {
+  font-size: 11px;
+  color: var(--color-text-faint);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.hp-cell--unit {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 12px;
+}
+
+.hp-cell--num {
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+
+/* ── Category badge ──────────────────────────────────────── */
+.hp-cat-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+/* ── Threshold values ────────────────────────────────────── */
+.hp-threshold {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.hp-threshold--warn { color: #f59e0b; }
+.hp-threshold--crit { color: #ef4444; }
+
+/* ── Model badges ────────────────────────────────────────── */
+.hp-models {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.hp-model-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+/* ── Action buttons ──────────────────────────────────────── */
+.hp-cell--actions {
+  display: flex;
+  gap: 6px;
+}
+
+.hp-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-inset);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: var(--color-text-muted);
+}
+
+.hp-action-btn--edit:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: #3b82f610;
+}
+
+.hp-action-btn--delete:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: #ef444410;
+}

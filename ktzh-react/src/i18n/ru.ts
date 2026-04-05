@@ -75,6 +75,69 @@ const ru: Record<string, string> = {
 
   /* ── Status ──────────────────────────────────── */
   loading: 'Загрузка',
+
+  /* ── Admin ───────────────────────────────────── */
+  administration: 'Администрирование',
+  adminView: 'Админ',
+  clientView: 'Клиент',
+  fleetManagement: 'Управление парком',
+  fleetManagementDesc: 'Управление инвентарём и конфигурацией локомотивов',
+  alertThresholds: 'Пороги оповещений',
+  alertThresholdsDesc: 'Настройка порогов параметров для оповещений',
+  healthParams: 'Параметры здоровья',
+  healthParamsDesc: 'Настройка весов и порогов параметров мониторинга для индекса здоровья',
+  systemDiagnostics: 'Диагностика системы',
+  systemDiagnosticsDesc: 'Мониторинг состояния и подключений системы',
+
+  /* ── Fleet table ─────────────────────────────── */
+  boardNumber: 'БОРТОВОЙ НОМЕР',
+  typeCol: 'ТИП',
+  productionDate: 'ДАТА ПРОИЗВОДСТВА',
+  statusCol: 'СТАТУС',
+  actionsCol: 'ДЕЙСТВИЯ',
+  addLocomotive: '+ Добавить локомотив',
+  searchLocomotive: 'Поиск локомотива...',
+  addNewLocomotive: 'Добавить новый локомотив',
+  editLocomotive: 'Редактировать локомотив',
+  saveChanges: 'Сохранить',
+  cancel: 'Отмена',
+  save: 'Сохранить',
+  electric: 'Электрический',
+  diesel: 'Дизельный',
+  statusActive: 'АКТИВЕН',
+  statusMaintenance: 'ОБСЛУЖИВАНИЕ',
+  statusRemoved: 'УДАЛЁН',
+
+  /* ── Alert thresholds ────────────────────────── */
+  selectLocomotive: 'Выбрать локомотив',
+  parameter: 'Параметр',
+  thresholdValues: 'Значения порогов',
+  criticalLow: 'Крит. минимум',
+  criticalHigh: 'Крит. максимум',
+  warningLow: 'Предупр. минимум',
+  warningHigh: 'Предупр. максимум',
+  saveThresholds: 'Сохранить пороги',
+  reset: 'Сбросить',
+  thresholdPreview: 'Предпросмотр порогов',
+  criticalZone: 'Критическая зона',
+  warningZone: 'Зона предупреждения',
+  normalZone: 'Нормальная зона',
+  currentVal: 'Текущее',
+
+  /* ── System diagnostics ──────────────────────── */
+  rabbitMQQueues: 'Очереди RabbitMQ',
+  mainQueue: 'Основная очередь',
+  deadLetterQueue: 'Очередь мёртвых писем (DLQ)',
+  messagesPerMin: 'сообщ./мин',
+  messagesCount: 'сообщений',
+  ingestionService: 'Сервис обработки',
+  messagesPerSec: 'сообщ./сек',
+  operatingNormally: 'Работает нормально',
+  locomotiveConnections: 'Подключения локомотивов',
+  liveNow: 'В эфире',
+  noSignal: 'Нет сигнала >5 мин',
+  underMaintenance: 'На обслуживании',
+  signalLostMin: 'Сигнал потерян',
 };
 
 export default ru;
