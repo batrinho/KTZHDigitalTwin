@@ -42,3 +42,12 @@ export { fetchHistory, exportCsv } from './history';
 // Alerts (active alerts for a locomotive)
 export { fetchActiveAlerts } from './alerts';
 export type { ActiveAlert } from './alerts';
+
+// Alert thresholds (threshold bands per parameter)
+export {
+  fetchThresholds,
+  fetchThreshold,
+  upsertThreshold,
+  deleteThreshold,
+} from './thresholds';
+export type { ThresholdResponse, UpsertThresholdRequest } from '../models/threshold';

@@ -117,3 +117,41 @@
   color: var(--color-text-primary);
   background: var(--color-surface-raised);
 }
+
+/* ── View toggle (admin / client) ────────────── */
+.view-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.view-toggle-btn:hover {
+  background: var(--color-surface-inset-hover);
+  border-color: #3b82f6;
+  color: var(--color-text-primary);
+}
+
+.view-toggle-btn--admin {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #60a5fa;
+}
+
+.view-toggle-btn--admin:hover {
+  background: rgba(59, 130, 246, 0.18);
+  border-color: #3b82f6;
+  color: #93c5fd;
+}

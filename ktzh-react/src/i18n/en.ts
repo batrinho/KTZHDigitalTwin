@@ -75,6 +75,69 @@ const en: Record<string, string> = {
 
   /* ── Status ──────────────────────────────────── */
   loading: 'Loading',
+
+  /* ── Admin ───────────────────────────────────── */
+  administration: 'Administration',
+  adminView: 'Admin',
+  clientView: 'Client View',
+  fleetManagement: 'Fleet Management',
+  fleetManagementDesc: 'Manage locomotive inventory and configurations',
+  alertThresholds: 'Alert Thresholds',
+  alertThresholdsDesc: 'Configure parameter thresholds for alerts',
+  healthParams: 'Health Parameters',
+  healthParamsDesc: 'Configure monitoring parameter weights and thresholds for the health index',
+  systemDiagnostics: 'System Diagnostics',
+  systemDiagnosticsDesc: 'Monitor system health and connectivity',
+
+  /* ── Fleet table ─────────────────────────────── */
+  boardNumber: 'BOARD NUMBER',
+  typeCol: 'TYPE',
+  productionDate: 'PRODUCTION DATE',
+  statusCol: 'STATUS',
+  actionsCol: 'ACTIONS',
+  addLocomotive: '+ Add Locomotive',
+  searchLocomotive: 'Search locomotive...',
+  addNewLocomotive: 'Add New Locomotive',
+  editLocomotive: 'Edit Locomotive',
+  saveChanges: 'Save Changes',
+  cancel: 'Cancel',
+  save: 'Save',
+  electric: 'Electric',
+  diesel: 'Diesel',
+  statusActive: 'ACTIVE',
+  statusMaintenance: 'MAINTENANCE',
+  statusRemoved: 'REMOVED',
+
+  /* ── Alert thresholds ────────────────────────── */
+  selectLocomotive: 'Select Locomotive',
+  parameter: 'Parameter',
+  thresholdValues: 'Threshold Values',
+  criticalLow: 'Critical Low',
+  criticalHigh: 'Critical High',
+  warningLow: 'Warning Low',
+  warningHigh: 'Warning High',
+  saveThresholds: 'Save Thresholds',
+  reset: 'Reset',
+  thresholdPreview: 'Threshold Preview',
+  criticalZone: 'Critical Zone',
+  warningZone: 'Warning Zone',
+  normalZone: 'Normal Zone',
+  currentVal: 'Current',
+
+  /* ── System diagnostics ──────────────────────── */
+  rabbitMQQueues: 'RabbitMQ Queues',
+  mainQueue: 'Main Queue',
+  deadLetterQueue: 'Dead Letter Queue (DLQ)',
+  messagesPerMin: 'messages/min',
+  messagesCount: 'messages',
+  ingestionService: 'Ingestion Service',
+  messagesPerSec: 'messages/sec',
+  operatingNormally: 'Operating normally',
+  locomotiveConnections: 'Locomotive Connections',
+  liveNow: 'Live now',
+  noSignal: 'No signal >5 min',
+  underMaintenance: 'Under maintenance',
+  signalLostMin: 'Signal lost',
 };
 
 export default en;
