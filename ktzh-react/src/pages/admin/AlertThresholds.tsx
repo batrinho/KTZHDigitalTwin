@@ -7,8 +7,6 @@ import { useLocale } from '../../context/LocaleContext';
 import '../AdminPage.css';
 import './AlertThresholds.css';
 
-/* ── Threshold bar preview ───────────────────────────────── */
-
 interface ThresholdBarProps {
   criticalLow: number;
   criticalHigh: number;
@@ -74,8 +72,6 @@ function ThresholdBar({
   );
 }
 
-/* ── Helper: guess axis max from unit / paramName ─────────── */
-
 function guessMax(unit?: string, paramName?: string): number {
   const u = (unit ?? '').toLowerCase();
   const p = (paramName ?? '').toLowerCase();
@@ -89,8 +85,6 @@ function guessMax(unit?: string, paramName?: string): number {
   if (u === 'kn' || p.includes('force')) return 500;
   return 120;
 }
-
-/* ── Main component ──────────────────────────────────────── */
 
 export default function AlertThresholds() {
   const { t } = useLocale();
@@ -110,8 +104,6 @@ export default function AlertThresholds() {
   const [saving,   setSaving]   = useState(false);
   const [saveMsg,  setSaveMsg]  = useState('');
 
-  /* ── Initial load ────────────────────────────────────────── */
-
   useEffect(() => {
     Promise.all([fetchLocomotives(), fetchThresholds()])
       .then(([ls, ts]) => {
@@ -123,14 +115,10 @@ export default function AlertThresholds() {
       .finally(() => setLoading(false));
   }, []);
 
-  /* ── Derived selections ──────────────────────────────────── */
-
   const selectedThresh =
     thresholds.find(t => t.id === selectedThreshId) ??
     thresholds[0] ??
     null;
-
-  /* ── Sync form to selected threshold ─────────────────────── */
 
   useEffect(() => {
     if (!selectedThresh) return;
@@ -139,9 +127,6 @@ export default function AlertThresholds() {
     setWarningLow(String(selectedThresh.warningLow    ?? ''));
     setWarningHigh(String(selectedThresh.warningHigh  ?? ''));
   }, [selectedThresh?.id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-
-  /* ── Numeric form values ─────────────────────────────────── */
 
   const numCL = parseFloat(criticalLow)  || 0;
   const numCH = parseFloat(criticalHigh) || 0;
@@ -152,8 +137,6 @@ export default function AlertThresholds() {
 
   const currentPreview = Math.round((numWL + numWH) / 2);
 
-  /* ── Reset ───────────────────────────────────────────────── */
-
   function handleReset() {
     if (!selectedThresh) return;
     setCriticalLow(String(selectedThresh.criticalLow  ?? ''));
@@ -162,8 +145,6 @@ export default function AlertThresholds() {
     setWarningHigh(String(selectedThresh.warningHigh  ?? ''));
     setSaveMsg('');
   }
-
-  /* ── Save ────────────────────────────────────────────────── */
 
   async function handleSave() {
     if (!selectedThresh) return;
@@ -196,8 +177,6 @@ export default function AlertThresholds() {
       setSaving(false);
     }
   }
-
-  /* ── Render ──────────────────────────────────────────────── */
 
   return (
     <div>

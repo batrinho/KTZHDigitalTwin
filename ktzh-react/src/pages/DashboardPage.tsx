@@ -1,6 +1,8 @@
+import { useCallback, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { categoryToHealthInfo } from '../models/route';
+import { acknowledgeAlert } from '../api/alerts';
 import AppHeader from '../components/AppHeader';
 import TopBar from '../components/dashboard/TopBar';
 import HealthPanel from '../components/dashboard/HealthPanel';
@@ -8,6 +10,7 @@ import AlertsPanel from '../components/dashboard/AlertsPanel';
 import TelemetryPanel from '../components/dashboard/TelemetryPanel';
 import RouteMap from '../components/dashboard/RouteMap';
 import { useLocale } from '../context/LocaleContext';
+import type { Alert } from '../models/dashboard';
 import './DashboardPage.css';
 
 function tempClass(value: number | undefined, warnAt: number, critAt: number): string {
@@ -22,20 +25,22 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const { t } = useLocale();
 
+  const ws = useDashboardData(id);
   const {
-    connected,
-    locomotiveType,
-    routeId,
-    telemetry,
-    healthScore,
-    healthCategory,
-    healthFactors,
-    alerts,
-    buffer,
-    stations,
-    progressPercent,
-    remainingKm,
-  } = useDashboardData(id);
+    connected, locomotiveType, routeId, telemetry,
+    healthScore, healthCategory, healthFactors,
+    buffer, stations, progressPercent, remainingKm,
+  } = ws;
+
+  const [alerts, setAlerts] = useState<Alert[]>(ws.alerts);
+  useEffect(() => { setAlerts(ws.alerts); }, [ws.alerts]);
+
+  const handleDismiss = useCallback(async (alert: Alert) => {
+    setAlerts(prev => prev.filter(a => a !== alert));
+    if (alert.id) {
+      await acknowledgeAlert(alert.id).catch(() => {});
+    }
+  }, []);
 
   const healthInfo = categoryToHealthInfo(healthCategory);
   const p = telemetry;
@@ -53,10 +58,7 @@ export default function DashboardPage() {
         <button className="btn btn--ghost" onClick={() => navigate('/')}>
           {t('backToRoutes')}
         </button>
-        <button
-          className="btn btn--outline"
-          onClick={() => navigate(`/replay/${id}`)}
-        >
+        <button className="btn btn--outline" onClick={() => navigate(`/replay/${id}`)}>
           {t('viewReplay')}
         </button>
       </div>
@@ -77,7 +79,6 @@ export default function DashboardPage() {
           />
 
           <div className="metrics-row">
-            {/* ── Speed ──────────────────────────────── */}
             <div className="panel metric-card">
               <div className="metric-card__head">
                 <svg width="14" height="14" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="#94a3b8" strokeWidth="1.2" fill="none" /><path d="M8 5v3l2 2" stroke="#94a3b8" strokeWidth="1.2" strokeLinecap="round" /></svg>
@@ -91,7 +92,6 @@ export default function DashboardPage() {
               <div className="bar-labels"><span>0</span><span>120</span></div>
             </div>
 
-            {/* ── Sand Level ─────────────────────────── */}
             <div className="panel metric-card">
               <div className="metric-card__head">
                 <svg width="14" height="14" viewBox="0 0 16 16"><rect x="3" y="2" width="8" height="12" rx="1" stroke="#94a3b8" strokeWidth="1.2" fill="none" /><rect x="5" y="6" width="4" height="6" rx="0.5" fill="#3b82f640" /></svg>
@@ -104,7 +104,6 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* ── Pressure ───────────────────────────── */}
             <div className="panel metric-card">
               <div className="metric-card__head">
                 <svg width="14" height="14" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="#94a3b8" strokeWidth="1.2" fill="none" /><path d="M8 5v3" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" /></svg>
@@ -131,7 +130,6 @@ export default function DashboardPage() {
           </div>
 
           <div className="metrics-row metrics-row--two">
-            {/* ── Temperature ────────────────────────── */}
             <div className="panel metric-card">
               <div className="metric-card__head">
                 <svg width="14" height="14" viewBox="0 0 16 16"><path d="M8 1v10M5 11a3 3 0 106 0" stroke="#94a3b8" strokeWidth="1.2" strokeLinecap="round" fill="none" /></svg>
@@ -160,7 +158,6 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* ── Electrical ─────────────────────────── */}
             <div className="panel metric-card">
               <div className="metric-card__head">
                 <svg width="14" height="14" viewBox="0 0 16 16"><path d="M9 1L4 9h4l-1 6 6-8H9l1-6z" stroke="#94a3b8" strokeWidth="1.2" fill="none" /></svg>
@@ -185,7 +182,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <AlertsPanel alerts={alerts} />
+          <AlertsPanel alerts={alerts} onDismiss={handleDismiss} />
         </div>
 
         <RouteMap
