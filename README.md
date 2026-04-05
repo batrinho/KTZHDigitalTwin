@@ -2,7 +2,16 @@
 
 A real-time locomotive monitoring dashboard for Kazakhstan Temir Zholy (KTZ). Displays live telemetry, system health, route progress, and alerts for active railway routes — with a full administration panel and historical replay.
 
-Here's the website link: https://ktzh-digital-twin.vercel.app/
+# **Website**
+# https://ktzh-digital-twin.vercel.app/
+
+## **Для того чтобы начать симулятор данных**
+Сделайте POST-запрос на  
+`https://simulator-service-production.up.railway.app/api/simulator/start`
+
+## **Чтобы остановить**
+Сделайте запрос на  
+`https://simulator-service-production.up.railway.app/api/simulator/stop`
 
 ---
 
