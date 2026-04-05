@@ -23,8 +23,9 @@
 
 /* ── Left: identity ─────────────────────────────── */
 .card__info {
-  min-width: 180px;
+  width: 220px;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .card__route {
@@ -35,6 +36,9 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card__type {
