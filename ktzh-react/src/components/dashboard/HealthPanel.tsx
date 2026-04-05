@@ -28,7 +28,7 @@ export default function HealthPanel({ healthIndex, healthInfo, healthFactors }: 
       <div className="health-panel__body">
         <div className="gauge-wrap">
           <svg viewBox="0 0 200 200" className="gauge-svg">
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#2a2d3e" strokeWidth="10" />
+            <circle cx="100" cy="100" r="80" fill="none" stroke="var(--color-border)" strokeWidth="10" />
             <circle cx="100" cy="100" r="80" fill="none"
               stroke={healthInfo.color}
               strokeWidth="10"
@@ -36,7 +36,7 @@ export default function HealthPanel({ healthIndex, healthInfo, healthFactors }: 
               strokeDasharray={gaugeDash}
               transform="rotate(-90 100 100)" />
             <text x="100" y="95" textAnchor="middle" dominantBaseline="central"
-              fill="#e2e8f0" fontSize="52" fontWeight="700">
+              fill="var(--color-text-primary)" fontSize="52" fontWeight="700">
               {healthIndex != null ? healthIndex : '—'}
             </text>
             <text x="100" y="130" textAnchor="middle"
