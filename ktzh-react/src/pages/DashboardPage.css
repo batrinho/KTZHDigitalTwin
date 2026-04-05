@@ -295,6 +295,7 @@
 }
 
 .temp-val { font-weight: 600; color: var(--color-text-primary); }
+.temp-val--warn { color: #eab308; }
 .temp-val--hot { color: #ef4444; }
 
 /* ── Electrical card ─────────────────────────────────────── */

@@ -39,20 +39,25 @@ export interface TelemetrySnapshot {
   odometer?: number;
 }
 
-/* ── Telemetry params (streaming or from snapshot) ─────── */
+/* ── Telemetry params (from smoothedParameters) ────────── */
 export interface TelemetryParams {
   speed?: number;
-  fuel_level?: number;
-  fuel_consumption?: number;
+  traction_force?: number;
+  brake_force?: number;
+  throttle_pos?: number;
+  traction_motor_temp?: number;
+  ambient_temp?: number;
+  transformer_oil_temp?: number;
+  brake_pipe_pressure?: number;
+  brake_cylinder_pressure?: number;
   main_reservoir_pressure?: number;
-  brake_pressure?: number;
-  oil_pressure?: number;
-  engine_temp?: number;
-  brake_temp?: number;
-  coolant_temp?: number;
-  voltage?: number;
-  current?: number;
-  power?: number;
+  traction_motor_current?: number;
+  battery_voltage?: number;
+  catenary_voltage?: number;
+  dc_bus_voltage?: number;
+  regen_power?: number;
+  sand_level?: number;
+  cabin_temp?: number;
   [key: string]: number | undefined;
 }
 
@@ -86,18 +91,6 @@ export interface WsAlert {
 export interface HistoryPoint {
   timestamp: string;
   phase?: string;
-  speed?: number;
-  coolant_temp?: number;
-  engine_temp?: number;
-  brake_temp?: number;
-  fuel_level?: number;
-  fuel_consumption?: number;
-  main_reservoir_pressure?: number;
-  brake_pressure?: number;
-  oil_pressure?: number;
-  voltage?: number;
-  current?: number;
-  power?: number;
   [key: string]: string | number | undefined;
 }
 
@@ -107,4 +100,23 @@ export interface HealthSnapshot {
   score: number | null;
   category: string | null;
   trend: string | null;
+}
+
+/* ── Route definition (GET /api/v1/route-definitions) ──── */
+export interface RouteWaypoint {
+  id: string;
+  sortOrder: number;
+  cityName: string;
+  kmFromStart: number;
+  lat: number;
+  lon: number;
+  speedLimit?: number;
+}
+
+export interface RouteDefinition {
+  id: string;
+  routeId: string;
+  name: string;
+  totalKm: number;
+  waypoints: RouteWaypoint[];
 }

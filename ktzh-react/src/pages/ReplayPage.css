@@ -1,24 +1,47 @@
 .replay-page {
   min-height: 100vh;
   background: var(--color-bg);
-  padding: 20px 28px 32px;
+  padding: 20px 28px 40px;
   box-sizing: border-box;
 }
 
-.replay-controls {
+/* ── Top nav ─────────────────────────────────────────────── */
+.rp-topnav {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 16px;
-  margin-bottom: 16px;
-  padding: 14px 20px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
 }
 
-.replay-ranges {
+.rp-topnav__left {
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: 12px;
 }
 
-.replay-range-btn {
+.rp-topnav__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.rp-mode-badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--color-text-muted);
+  background: var(--color-border);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* ── Range buttons ───────────────────────────────────────── */
+.rp-ranges { display: flex; gap: 6px; }
+
+.rp-range-btn {
   padding: 6px 14px;
   border-radius: 8px;
   border: 1px solid var(--color-border);
@@ -29,39 +52,234 @@
   cursor: pointer;
   transition: all 0.15s ease;
 }
-
-.replay-range-btn:hover {
+.rp-range-btn:hover:not(:disabled) {
   border-color: #3b82f6;
   color: var(--color-text-primary);
 }
-
-.replay-range-btn--active {
+.rp-range-btn--active {
   background: #3b82f6;
   border-color: #3b82f6;
-  color: white;
+  color: #fff;
 }
+.rp-range-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.replay-status {
+.rp-status {
   font-size: 13px;
   color: var(--color-text-muted);
-  margin-left: auto;
+}
+.rp-status--error { color: #ef4444; }
+
+/* ── Export button ───────────────────────────────────────── */
+.btn--primary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #3b82f6;
+  border: 1px solid #3b82f6;
+  color: #fff;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.12s ease;
+}
+.btn--primary:hover:not(:disabled) {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+.btn--primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ── Timeline panel ──────────────────────────────────────── */
+.rp-timeline {
+  padding: 16px 20px 18px;
+  margin-bottom: 14px;
 }
 
-.replay-status--error {
-  color: #ef4444;
+.tl-time-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.tl-time {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.tl-time--current {
+  color: var(--color-text-primary);
+  font-weight: 600;
 }
 
-.replay-charts {
+/* ── Track ───────────────────────────────────────────────── */
+.tl-track-wrap {
+  position: relative;
+  height: 10px;
+  background: var(--color-border);
+  border-radius: 5px;
+  margin-bottom: 0;
+}
+
+.tl-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: #3b82f6;
+  border-radius: 5px;
+  pointer-events: none;
+  transition: width 0.08s linear;
+}
+
+/* Event markers on the track — clickable dots */
+.tl-event-marker {
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  width: 14px;
+  transform: translateX(-50%);
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tl-event-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-surface);
+  box-shadow: 0 0 4px rgba(0,0,0,0.3);
+  transition: transform 0.15s ease;
+}
+
+.tl-event-marker:hover .tl-event-dot {
+  transform: scale(1.4);
+}
+
+/* Tooltip on hover */
+.tl-event-tooltip {
+  position: absolute;
+  top: 20px;
+  transform: translateX(-50%);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 2px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
-.replay-charts .chart-box {
-  padding: 16px 20px;
+.tl-event-tooltip__label {
+  font-size: 11px;
+  font-weight: 600;
 }
 
-.replay-charts .chart-svg {
+.tl-event-tooltip__time {
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+/* Native range input overlay for drag-to-seek */
+.tl-scrubber {
+  position: absolute;
+  inset: -8px 0;
   width: 100%;
-  height: auto;
+  height: calc(100% + 16px);
+  opacity: 0;
+  cursor: pointer;
+  z-index: 3;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Event labels row ────────────────────────────────────── */
+.tl-events-row {
+  position: relative;
+  height: 24px;
+  margin-top: 10px;
+}
+
+.tl-event-label {
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 0;
+  transition: opacity 0.15s ease;
+}
+.tl-event-label:hover { opacity: 0.7; }
+
+/* ── Playback controls (centered) ────────────────────────── */
+.tl-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.tl-ctrl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.tl-ctrl-btn:hover {
+  border-color: #3b82f6;
+  color: var(--color-text-primary);
+  background: var(--color-surface-inset-hover);
+}
+
+.tl-ctrl-btn--play {
+  width: 46px;
+  height: 46px;
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #fff;
+  border-radius: 50%;
+}
+.tl-ctrl-btn--play:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+  transform: scale(1.06);
+}
+
+.tl-ctrl-btn--speed {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: 0.3px;
+  min-width: 44px;
+  padding: 0 8px;
+}
+
+/* ── Charts panel ────────────────────────────────────────── */
+.rp-charts-panel {
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+.rp-empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--color-text-muted);
+  font-size: 14px;
 }

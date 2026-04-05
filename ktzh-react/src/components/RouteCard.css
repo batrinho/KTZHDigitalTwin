@@ -21,8 +21,10 @@
   transform: scale(0.985);
 }
 
+/* ── Left: identity ─────────────────────────────── */
 .card__info {
   min-width: 180px;
+  flex-shrink: 0;
 }
 
 .card__route {
@@ -51,57 +53,94 @@
   line-height: 1.6;
 }
 
-/* ── Telemetry section ──────────────────────── */
-.card__telemetry-section {
+.card__phase {
+  font-size: 12px;
+  color: var(--color-text-faint);
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+}
+
+/* ── Center: progress ───────────────────────────── */
+.card__progress-section {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.card__telemetry-row {
+.card__progress-labels {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--color-text-faint);
 }
 
-.train-icon {
-  width: 32px;
-  height: 22px;
-  display: block;
-  flex-shrink: 0;
+.card__progress-track {
+  position: relative;
+  height: 8px;
+  background: var(--color-border);
+  border-radius: 4px;
+  overflow: visible;
 }
 
-.card__live-stats {
-  display: flex;
-  gap: 16px;
+.card__progress-fill {
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 4px;
+  transition: width 0.5s ease;
 }
 
-.card__stat {
-  font-size: 14px;
-  color: var(--color-text-secondary);
+.card__progress-train {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px #0008);
 }
 
-.card__stat strong {
-  font-size: 18px;
+.card__progress-stat {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.card__progress-stat strong {
   color: var(--color-text-primary);
   font-weight: 700;
 }
 
-.card__trend {
+.card__progress-total {
+  color: var(--color-text-faint);
   font-size: 12px;
-  color: var(--color-text-muted);
-  text-transform: capitalize;
-  padding-left: 44px;
 }
 
-/* ── Health badge ───────────────────────────── */
+.card__speed-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.card__speed-val {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.card__speed-unit {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* ── Right: health badge ────────────────────────── */
 .card__health {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
   min-width: 90px;
+  flex-shrink: 0;
 }
 
 .health-badge {
@@ -126,4 +165,9 @@
   font-size: 12px;
   font-weight: 600;
   text-align: center;
+}
+
+.card__trend {
+  font-size: 16px;
+  font-weight: 700;
 }

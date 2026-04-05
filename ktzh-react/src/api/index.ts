@@ -29,6 +29,13 @@ export {
   deleteHealthParamWeight,
 } from './healthParamWeights';
 
+// Route definitions (stations/waypoints from PostgreSQL)
+export {
+  fetchRouteDefinitions,
+  fetchRouteDefinition,
+  fetchRouteDefinitionByRouteId,
+} from './routeDefinitions';
+
 // History / replay
 export { fetchHistory, exportCsv } from './history';
 

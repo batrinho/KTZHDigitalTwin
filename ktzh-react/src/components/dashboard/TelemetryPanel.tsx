@@ -6,6 +6,7 @@ import type { RingBuffer } from '../../hooks/useRingBuffer';
 interface ChartConfig {
   label: string;
   data: number[];
+  timestamps: number[];
   min: number;
   max: number;
   gridLabels: string[];
@@ -13,7 +14,7 @@ interface ChartConfig {
 }
 
 const X0 = 30, Y0 = 10, W = 260, H = 100;
-const DISPLAY_POINTS = 120;
+const TEN_MINUTES_MS = 10 * 60 * 1000;
 
 interface HoverState {
   svgX: number;
@@ -30,6 +31,40 @@ function ChartGrid({ labels }: { labels: string[] }) {
           <line x1="30" y1={y} x2="290" y2={y} stroke="#2a2d3e" strokeWidth="0.5" />
           <text x="26" y={y + 4} fill="#475569" fontSize="8" textAnchor="end">{labels[i]}</text>
         </g>
+      ))}
+    </>
+  );
+}
+
+function TimeAxis({ timestamps }: { timestamps: number[] }) {
+  if (timestamps.length < 2) return null;
+
+  const first = timestamps[0];
+  const last = timestamps[timestamps.length - 1];
+  const labelCount = 6;
+  const labels: { x: number; text: string }[] = [];
+
+  for (let i = 0; i < labelCount; i++) {
+    const ts = first + (last - first) * (i / (labelCount - 1));
+    const d = new Date(ts);
+    const hh = d.getHours().toString().padStart(2, '0');
+    const mm = d.getMinutes().toString().padStart(2, '0');
+    labels.push({ x: X0 + (i / (labelCount - 1)) * W, text: `${hh}:${mm}` });
+  }
+
+  return (
+    <>
+      {labels.map(l => (
+        <text
+          key={l.x}
+          x={l.x}
+          y={128}
+          fill="#475569"
+          fontSize="7"
+          textAnchor="middle"
+        >
+          {l.text}
+        </text>
       ))}
     </>
   );
@@ -68,13 +103,15 @@ function Chart({ config }: { config: ChartConfig }) {
       <div className="chart-label">{config.label}</div>
       <svg
         ref={svgRef}
-        viewBox="0 0 300 120"
+        viewBox="0 0 300 135"
         className="chart-svg"
         style={{ cursor: config.data.length > 1 ? 'crosshair' : 'default' }}
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setHover(null)}
       >
         <ChartGrid labels={config.gridLabels} />
+        <TimeAxis timestamps={config.timestamps} />
+
         {config.data.length > 1 && (
           <path d={path} fill="none" stroke={config.strokeColor} strokeWidth="1.5" />
         )}
@@ -131,14 +168,16 @@ export default function TelemetryPanel({ buffer }: TelemetryPanelProps) {
   const { t } = useLocale();
 
   const charts: ChartConfig[] = useMemo(() => {
-    const speedData = buffer.extractField('speed', DISPLAY_POINTS);
-    const tempData = buffer.extractField('coolant_temp', DISPLAY_POINTS);
-    const voltData = buffer.extractField('voltage', DISPLAY_POINTS);
+    const now = Date.now();
+    const points = buffer.getRange(now - TEN_MINUTES_MS, now);
+    const timestamps = points.map(e => e._ts);
+    const field = (name: string) => points.map(e => (e[name] as number) ?? 0);
 
     return [
       {
         label: t('chartSpeed'),
-        data: speedData,
+        data: field('speed'),
+        timestamps,
         min: 0,
         max: 120,
         gridLabels: ['120', '90', '60', '30', '0'],
@@ -146,18 +185,20 @@ export default function TelemetryPanel({ buffer }: TelemetryPanelProps) {
       },
       {
         label: t('chartTemp'),
-        data: tempData,
+        data: field('traction_motor_temp'),
+        timestamps,
         min: 0,
-        max: 120,
-        gridLabels: ['120', '90', '60', '30', '0'],
+        max: 160,
+        gridLabels: ['160', '120', '80', '40', '0'],
         strokeColor: '#3b82f6',
       },
       {
         label: t('chartElectrical'),
-        data: voltData,
+        data: field('catenary_voltage'),
+        timestamps,
         min: 0,
-        max: 28,
-        gridLabels: ['28', '21', '14', '7', '0'],
+        max: 30,
+        gridLabels: ['30', '22', '15', '7', '0'],
         strokeColor: '#eab308',
       },
     ];
