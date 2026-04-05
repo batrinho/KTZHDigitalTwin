@@ -46,50 +46,6 @@ interface TimelineEvent {
   timestamp: string;
 }
 
-function detectEvents(data: HistoryPoint[]): TimelineEvent[] {
-  const events: TimelineEvent[] = [];
-  if (data.length < 2) return events;
-  const n = data.length;
-  let motorHot = false;
-  let oilHot = false;
-  let lastPhase = data[0].phase;
-
-  for (let i = 1; i < n; i++) {
-    const pos = i / (n - 1);
-    const row = data[i];
-
-    if (!motorHot && ((row.traction_motor_temp as number) ?? 0) > 120) {
-      events.push({
-        position: pos, label: 'Motor Temp Warning', color: '#eab308',
-        severity: 'warning', index: i, timestamp: row.timestamp,
-      });
-      motorHot = true;
-    } else if (motorHot && ((row.traction_motor_temp as number) ?? 0) <= 110) {
-      motorHot = false;
-    }
-
-    if (!oilHot && ((row.transformer_oil_temp as number) ?? 0) > 85) {
-      events.push({
-        position: pos, label: 'High Temp', color: '#ef4444',
-        severity: 'critical', index: i, timestamp: row.timestamp,
-      });
-      oilHot = true;
-    } else if (oilHot && ((row.transformer_oil_temp as number) ?? 0) <= 80) {
-      oilHot = false;
-    }
-
-    if (row.phase && row.phase !== lastPhase) {
-      const label = row.phase === 'STATION_STOP' || row.phase === 'STOPPED'
-        ? 'Station Stop' : `Phase: ${row.phase}`;
-      events.push({
-        position: pos, label, color: '#3b82f6',
-        severity: 'info', index: i, timestamp: row.timestamp,
-      });
-      lastPhase = row.phase;
-    }
-  }
-  return events;
-}
 
 /* ── Helpers ─────────────────────────────────────────────── */
 
