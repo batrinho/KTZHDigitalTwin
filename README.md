@@ -7,13 +7,13 @@ A real-time locomotive monitoring dashboard for Kazakhstan Temir Zholy (KTZ). Di
 
 ## **Для того чтобы начать симулятор данных**
 Сделайте POST-запрос на  
-`https://simulator-service-production.up.railway.app/api/simulator/start`
-curl -X POST https://simulator-service-production.up.railway.app/api/simulator/start
+`https://simulator-service-production.up.railway.app/api/simulator/start` |
+`curl -X POST https://simulator-service-production.up.railway.app/api/simulator/start`
 
 ## **Чтобы остановить**
 Сделайте запрос на  
-`https://simulator-service-production.up.railway.app/api/simulator/stop`
-curl -X POST https://simulator-service-production.up.railway.app/api/simulator/stop
+`https://simulator-service-production.up.railway.app/api/simulator/stop` |
+`curl -X POST https://simulator-service-production.up.railway.app/api/simulator/stop`
 
 ---
 
