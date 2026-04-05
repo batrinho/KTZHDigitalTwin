@@ -127,7 +127,7 @@ function ParamForm({ initial, onSave, onCancel }: ParamFormProps) {
         </label>
         <label className="form-label">
           Applicable to
-          <select className="form-select" value={form.applicableTo ?? 'BOTH'} onChange={e => set('applicableTo', e.target.value as UpsertHealthParamWeightRequest['applicableTo'])}>
+          <select className="form-select" value={form.applicableTo ?? 'BOTH'} onChange={e => set('applicableTo', e.target.value)}>
             <option value="BOTH">Both (DIESEL + ELECTRIC)</option>
             <option value="DIESEL">Diesel only</option>
             <option value="ELECTRIC">Electric only</option>
