@@ -6,7 +6,7 @@ import './RoutesPage.css';
 
 export default function RoutesPage() {
   const { t } = useLocale();
-  const { routes, loading, error } = useRoutes();
+  const { routes, routeDefs, loading, error } = useRoutes();
 
   return (
     <div className="page">
@@ -24,9 +24,16 @@ export default function RoutesPage() {
       )}
 
       <div className="route-list">
-        {routes.map(route => (
-          <RouteCard key={route.locomotiveId} route={route} />
-        ))}
+        {routes.map(route => {
+          const def = routeDefs.find(d => d.routeId === route.routeId) ?? null;
+          return (
+            <RouteCard
+              key={route.locomotiveId}
+              route={route}
+              totalKm={def?.totalKm ?? null}
+            />
+          );
+        })}
       </div>
     </div>
   );

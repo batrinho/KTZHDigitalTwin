@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { fetchRoutes } from '../api/routes';
-import type { ApiRoute } from '../models/api';
+import { fetchRouteDefinitions } from '../api/routeDefinitions';
+import type { ApiRoute, RouteDefinition } from '../models/api';
 
 const POLL_INTERVAL = 5000;
 
 export function useRoutes() {
   const [routes, setRoutes] = useState<ApiRoute[]>([]);
+  const [routeDefs, setRouteDefs] = useState<RouteDefinition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
@@ -13,6 +15,10 @@ export function useRoutes() {
   useEffect(() => {
     mountedRef.current = true;
     let timer: ReturnType<typeof setTimeout>;
+
+    fetchRouteDefinitions()
+      .then(defs => { if (mountedRef.current) setRouteDefs(defs); })
+      .catch(() => {});
 
     async function poll() {
       try {
@@ -41,5 +47,5 @@ export function useRoutes() {
     };
   }, []);
 
-  return { routes, loading, error };
+  return { routes, routeDefs, loading, error };
 }

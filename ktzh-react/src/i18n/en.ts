@@ -31,18 +31,16 @@ const en: Record<string, string> = {
 
   /* ── Metric cards ────────────────────────────── */
   speed: 'SPEED',
-  fuel: 'FUEL',
+  sand: 'FUEL',
   pressure: 'PRESSURE',
   temperature: 'TEMPERATURE',
   electrical: 'ELECTRICAL',
-  consumption: 'Consumption:',
-  lPerMin: 'L/min',
   mainReservoir: 'Main Reservoir',
-  brake: 'Brake',
-  oil: 'Oil',
-  engine: 'Engine',
-  brakes: 'Brakes',
-  coolant: 'Coolant',
+  brakePipe: 'Brake Pipe',
+  brakeCylinder: 'Brake Cyl.',
+  cabin: 'Cabin',
+  tractionMotor: 'Traction Motor',
+  transformerOil: 'Transformer Oil',
   voltage: 'Voltage',
   current: 'Current',
   power: 'Power',
@@ -59,7 +57,7 @@ const en: Record<string, string> = {
   remaining: 'Remaining',
 
   /* ── Telemetry ───────────────────────────────── */
-  telemetryHeading: 'REAL-TIME TELEMETRY',
+  telemetryHeading: 'REAL-TIME TELEMETRY \u2014 LAST 10 MINUTES',
   chartSpeed: 'SPEED (km/h)',
   chartTemp: 'TEMPERATURE (\u00B0C)',
   chartElectrical: 'ELECTRICAL SYSTEM',
@@ -72,6 +70,8 @@ const en: Record<string, string> = {
   replay: 'Replay / History',
   exportData: 'Export Data',
   dataPoints: 'data points',
+  backToLive: '\u2190 Back to Live',
+  replayTelemetry: 'REPLAY TELEMETRY',
 
   /* ── Status ──────────────────────────────────── */
   loading: 'Loading',

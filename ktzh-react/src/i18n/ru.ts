@@ -31,18 +31,16 @@ const ru: Record<string, string> = {
 
   /* ── Metric cards ────────────────────────────── */
   speed: 'СКОРОСТЬ',
-  fuel: 'ТОПЛИВО',
+  sand: 'ТОПЛИВО',
   pressure: 'ДАВЛЕНИЕ',
   temperature: 'ТЕМПЕРАТУРА',
   electrical: 'ЭЛЕКТРИКА',
-  consumption: 'Расход:',
-  lPerMin: 'л/мин',
   mainReservoir: 'Основной резервуар',
-  brake: 'Тормоз',
-  oil: 'Масло',
-  engine: 'Двигатель',
-  brakes: 'Тормоза',
-  coolant: 'Охлажд. жидкость',
+  brakePipe: 'Тормоз. магистраль',
+  brakeCylinder: 'Тормоз. цилиндр',
+  cabin: 'Кабина',
+  tractionMotor: 'Тяговый двигатель',
+  transformerOil: 'Трансформ. масло',
   voltage: 'Напряжение',
   current: 'Ток',
   power: 'Мощность',
@@ -59,7 +57,7 @@ const ru: Record<string, string> = {
   remaining: 'Осталось',
 
   /* ── Telemetry ───────────────────────────────── */
-  telemetryHeading: 'ТЕЛЕМЕТРИЯ В РЕАЛЬНОМ ВРЕМЕНИ',
+  telemetryHeading: 'ТЕЛЕМЕТРИЯ В РЕАЛЬНОМ ВРЕМЕНИ \u2014 ПОСЛЕДНИЕ 10 МИНУТ',
   chartSpeed: 'СКОРОСТЬ (км/ч)',
   chartTemp: 'ТЕМПЕРАТУРА (\u00B0C)',
   chartElectrical: 'ЭЛЕКТРИЧЕСКАЯ СИСТЕМА',
@@ -72,6 +70,8 @@ const ru: Record<string, string> = {
   replay: 'Повтор / История',
   exportData: 'Экспорт данных',
   dataPoints: 'точек данных',
+  backToLive: '\u2190 К прямому эфиру',
+  replayTelemetry: 'ТЕЛЕМЕТРИЯ ПОВТОРА',
 
   /* ── Status ──────────────────────────────────── */
   loading: 'Загрузка',
