@@ -8,8 +8,6 @@ import type { HealthParamWeight, UpsertHealthParamWeightRequest } from '../../mo
 import '../AdminPage.css';
 import './HealthParams.css';
 
-/* ── Category inference ──────────────────────────────────── */
-
 type Category = 'Engine' | 'Hydraulics' | 'Electrical' | 'Pneumatics' | 'Fuel' | 'Other';
 
 const CATEGORY_META: Record<Category, { label: string; icon: string; color: string }> = {
@@ -45,8 +43,6 @@ function inferUnit(paramName: string): string {
   return '—';
 }
 
-/* ── Category summary card ───────────────────────────────── */
-
 function CategoryCard({ cat, count, active }: { cat: Category; count: number; active: number }) {
   const meta = CATEGORY_META[cat];
   return (
@@ -58,8 +54,6 @@ function CategoryCard({ cat, count, active }: { cat: Category; count: number; ac
     </div>
   );
 }
-
-/* ── Add / Edit form ─────────────────────────────────────── */
 
 const EMPTY_FORM: UpsertHealthParamWeightRequest = {
   paramName: '',
@@ -143,8 +137,6 @@ function ParamForm({ initial, onSave, onCancel }: ParamFormProps) {
   );
 }
 
-/* ── Main component ──────────────────────────────────────── */
-
 export default function HealthParams() {
   const [params, setParams] = useState<HealthParamWeight[]>([]);
   const [loading, setLoading] = useState(true);
@@ -166,8 +158,6 @@ export default function HealthParams() {
 
   useEffect(() => { load(); }, []);
 
-  /* ── Category stats ───────────────────────────────────── */
-
   const catStats = useMemo(() => {
     const counts: Partial<Record<Category, number>> = {};
     for (const p of params) {
@@ -179,8 +169,6 @@ export default function HealthParams() {
 
   const CATEGORIES: Category[] = ['Engine', 'Hydraulics', 'Electrical', 'Pneumatics', 'Fuel'];
 
-  /* ── Filtered rows ────────────────────────────────────── */
-
   const filtered = useMemo(() => {
     if (!search.trim()) return params;
     const q = search.toLowerCase();
@@ -189,8 +177,6 @@ export default function HealthParams() {
       p.paramName.toLowerCase().includes(q)
     );
   }, [params, search]);
-
-  /* ── Save (add or edit) ───────────────────────────────── */
 
   async function handleSave(req: UpsertHealthParamWeightRequest) {
     const saved = await upsertHealthParamWeight(req);
@@ -201,8 +187,6 @@ export default function HealthParams() {
     setShowForm(false);
     setEditParam(null);
   }
-
-  /* ── Delete ───────────────────────────────────────────── */
 
   async function confirmDelete() {
     if (!deleteId) return;
@@ -215,8 +199,6 @@ export default function HealthParams() {
       setDeleteId(null);
     }
   }
-
-  /* ── Render ───────────────────────────────────────────── */
 
   return (
     <div>

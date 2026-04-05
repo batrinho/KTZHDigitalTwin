@@ -69,8 +69,6 @@ export function useTelemetryWs(locomotiveId: string | undefined) {
   const unmounted = useRef(false);
   const latestTelemetry = useRef<TelemetryParams>({});
 
-  /* ── Message handlers ─────────────────────────────────── */
-
   const handleSnapshot = useCallback((data: TelemetrySnapshot) => {
     const params = data.smoothedParameters ?? data.rawParameters ?? {};
     latestTelemetry.current = params;
@@ -112,7 +110,8 @@ export function useTelemetryWs(locomotiveId: string | undefined) {
     setState(prev => ({
       ...prev,
       healthScore: data.score,
-      healthCategory: deriveCategory(data.score),
+      healthCategory: data.category ?? deriveCategory(data.score),
+      healthTrend: data.trend ?? prev.healthTrend,
       healthFactors: data.topFactors ?? prev.healthFactors,
     }));
   }, []);
@@ -131,8 +130,6 @@ export function useTelemetryWs(locomotiveId: string | undefined) {
     });
   }, []);
 
-  /* ── WebSocket connect (with auto-reconnect) ──────────── */
-
   const connect = useCallback(() => {
     if (!locomotiveId || unmounted.current) return;
 
@@ -149,11 +146,11 @@ export function useTelemetryWs(locomotiveId: string | undefined) {
       try {
         const msg: WsMessage = JSON.parse(event.data);
         switch (msg.type) {
-          case 'TELEMETRY_SNAPSHOT':    handleSnapshot(msg.data as TelemetrySnapshot);         break;
-          case 'TELEMETRY':             handleTelemetry(msg.data as TelemetryParams);           break;
-          case 'HEALTH_INDEX_SNAPSHOT': handleHealthSnapshot(msg.data as HealthIndexSnapshot);  break;
-          case 'HEALTH_INDEX':          handleHealthUpdate(msg.data as HealthIndexUpdate);       break;
-          case 'ALERT':                 handleAlert(msg.data as WsAlert);                       break;
+          case 'TELEMETRY_SNAPSHOT':    handleSnapshot(msg.data as TelemetrySnapshot);        break;
+          case 'TELEMETRY':             handleTelemetry(msg.data as TelemetryParams);          break;
+          case 'HEALTH_INDEX_SNAPSHOT': handleHealthSnapshot(msg.data as HealthIndexSnapshot); break;
+          case 'HEALTH_INDEX':          handleHealthUpdate(msg.data as HealthIndexUpdate);      break;
+          case 'ALERT':                 handleAlert(msg.data as WsAlert);                      break;
         }
       } catch {
         // ignore malformed frames
@@ -170,8 +167,6 @@ export function useTelemetryWs(locomotiveId: string | undefined) {
     ws.onerror = () => { ws.close(); };
   }, [locomotiveId, handleSnapshot, handleTelemetry, handleHealthSnapshot, handleHealthUpdate, handleAlert]);
 
-  /* ── REST: initial active alerts ─────────────────────── */
-
   useEffect(() => {
     if (!locomotiveId) return;
     let cancelled = false;
@@ -180,6 +175,7 @@ export function useTelemetryWs(locomotiveId: string | undefined) {
       .then(activeAlerts => {
         if (cancelled) return;
         const mapped: Alert[] = activeAlerts.map(a => ({
+          id: a.id,
           message: a.message,
           severity: a.severity.toLowerCase() as Alert['severity'],
           timestamp: a.triggeredAt,
@@ -192,12 +188,10 @@ export function useTelemetryWs(locomotiveId: string | undefined) {
           return { ...prev, alerts: [...deduped, ...prev.alerts].slice(0, MAX_ALERTS) };
         });
       })
-      .catch(() => { /* alerts endpoint may not be live yet */ });
+      .catch(() => {});
 
     return () => { cancelled = true; };
   }, [locomotiveId]);
-
-  /* ── REST: initial health snapshot ───────────────────── */
 
   useEffect(() => {
     if (!locomotiveId) return;
@@ -208,19 +202,13 @@ export function useTelemetryWs(locomotiveId: string | undefined) {
         if (cancelled) return;
         setState(prev => {
           if (prev.healthScore != null) return prev;
-          return {
-            ...prev,
-            healthScore: snap.score,
-            healthCategory: snap.category,
-          };
+          return { ...prev, healthScore: snap.score, healthCategory: snap.category };
         });
       })
-      .catch(() => { /* health endpoint may not be available */ });
+      .catch(() => {});
 
     return () => { cancelled = true; };
   }, [locomotiveId]);
-
-  /* ── WebSocket lifecycle ─────────────────────────────── */
 
   useEffect(() => {
     unmounted.current = false;

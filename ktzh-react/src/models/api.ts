@@ -1,4 +1,3 @@
-/* ── Routes list (GET /api/v1/routes) ──────────────────── */
 export interface ApiRoute {
   locomotiveId: string;
   locomotiveType: string | null;
@@ -14,7 +13,6 @@ export interface ApiRoute {
   healthTrend: string | null;
 }
 
-/* ── WebSocket message envelope ────────────────────────── */
 export type WsMessageType =
   | 'TELEMETRY_SNAPSHOT'
   | 'HEALTH_INDEX_SNAPSHOT'
@@ -27,7 +25,6 @@ export interface WsMessage<T = unknown> {
   data: T;
 }
 
-/* ── Telemetry snapshot (last_state:{locoId}) ──────────── */
 export interface TelemetrySnapshot {
   locomotiveType?: string;
   routeId?: string;
@@ -39,7 +36,6 @@ export interface TelemetrySnapshot {
   odometer?: number;
 }
 
-/* ── Telemetry params (from smoothedParameters) ────────── */
 export interface TelemetryParams {
   speed?: number;
   traction_force?: number;
@@ -61,7 +57,6 @@ export interface TelemetryParams {
   [key: string]: number | undefined;
 }
 
-/* ── Health index ──────────────────────────────────────── */
 export interface HealthIndexSnapshot {
   score: number;
   category: string;
@@ -69,17 +64,25 @@ export interface HealthIndexSnapshot {
 }
 
 export interface HealthFactor {
-  name: string;
-  value: number;
+  paramName: string;
+  displayName: string;
+  rawValue: number;
+  normalizedDeviation: number;
   category?: string;
 }
 
 export interface HealthIndexUpdate {
   score: number;
+  category?: string;
+  trend?: string;
   topFactors?: HealthFactor[];
+  activeAlerts?: number;
+  dtcPenalty?: number;
+  locomotiveId?: string;
+  locomotiveType?: string;
+  calculatedAt?: string;
 }
 
-/* ── Alert (via WebSocket) ─────────────────────────────── */
 export interface WsAlert {
   severity: string;
   message: string;
@@ -87,14 +90,12 @@ export interface WsAlert {
   triggeredAt?: string;
 }
 
-/* ── History (GET /api/v1/history/:id) ─────────────────── */
 export interface HistoryPoint {
   timestamp: string;
   phase?: string;
   [key: string]: string | number | undefined;
 }
 
-/* ── Health snapshot (GET /api/v1/health/:id/history) ──── */
 export interface HealthSnapshot {
   timestamp: string;
   score: number | null;
@@ -102,7 +103,6 @@ export interface HealthSnapshot {
   trend: string | null;
 }
 
-/* ── Route definition (GET /api/v1/route-definitions) ──── */
 export interface RouteWaypoint {
   id: string;
   sortOrder: number;

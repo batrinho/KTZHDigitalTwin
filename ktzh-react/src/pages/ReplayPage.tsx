@@ -9,6 +9,8 @@ import RouteMap from '../components/dashboard/RouteMap';
 import { useLocale } from '../context/LocaleContext';
 import { fetchHistory, exportCsv } from '../api/history';
 import { fetchHealthHistory } from '../api/health';
+import { fetchAlertHistory } from '../api/alerts';
+import type { ActiveAlert } from '../api/alerts';
 import { fetchRouteDefinitionByRouteId } from '../api/routeDefinitions';
 import { fetchRoutes } from '../api/routes';
 import { categoryToHealthInfo } from '../models/route';
@@ -44,50 +46,6 @@ interface TimelineEvent {
   timestamp: string;
 }
 
-function detectEvents(data: HistoryPoint[]): TimelineEvent[] {
-  const events: TimelineEvent[] = [];
-  if (data.length < 2) return events;
-  const n = data.length;
-  let motorHot = false;
-  let oilHot = false;
-  let lastPhase = data[0].phase;
-
-  for (let i = 1; i < n; i++) {
-    const pos = i / (n - 1);
-    const row = data[i];
-
-    if (!motorHot && ((row.traction_motor_temp as number) ?? 0) > 120) {
-      events.push({
-        position: pos, label: 'Motor Temp Warning', color: '#eab308',
-        severity: 'warning', index: i, timestamp: row.timestamp,
-      });
-      motorHot = true;
-    } else if (motorHot && ((row.traction_motor_temp as number) ?? 0) <= 110) {
-      motorHot = false;
-    }
-
-    if (!oilHot && ((row.transformer_oil_temp as number) ?? 0) > 85) {
-      events.push({
-        position: pos, label: 'High Temp', color: '#ef4444',
-        severity: 'critical', index: i, timestamp: row.timestamp,
-      });
-      oilHot = true;
-    } else if (oilHot && ((row.transformer_oil_temp as number) ?? 0) <= 80) {
-      oilHot = false;
-    }
-
-    if (row.phase && row.phase !== lastPhase) {
-      const label = row.phase === 'STATION_STOP' || row.phase === 'STOPPED'
-        ? 'Station Stop' : `Phase: ${row.phase}`;
-      events.push({
-        position: pos, label, color: '#3b82f6',
-        severity: 'info', index: i, timestamp: row.timestamp,
-      });
-      lastPhase = row.phase;
-    }
-  }
-  return events;
-}
 
 /* ── Helpers ─────────────────────────────────────────────── */
 
@@ -349,6 +307,7 @@ export default function ReplayPage() {
   const [error, setError]               = useState<string | null>(null);
   const [data, setData]                 = useState<HistoryPoint[]>([]);
   const [healthHist, setHealthHist]     = useState<HealthSnapshot[]>([]);
+  const [alertHist, setAlertHist]       = useState<ActiveAlert[]>([]);
   const [routeDef, setRouteDef]         = useState<RouteDefinition | null>(null);
   const [, setRouteInfo]                = useState<ApiRoute | null>(null);
   const [from, setFrom]                 = useState('');
@@ -360,8 +319,50 @@ export default function ReplayPage() {
   const [playSpeed, setPlaySpeed]       = useState<PlaySpeed>(1);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  /* ── Derived: events on timeline ────────────────────────── */
-  const events = useMemo(() => detectEvents(data), [data]);
+  /* ── Derived: events on timeline (real alerts + phase changes) ── */
+  const events = useMemo((): TimelineEvent[] => {
+    if (data.length < 2) return [];
+    const n = data.length;
+
+    // Map each alert timestamp to a position on the telemetry timeline
+    const alertEvents: TimelineEvent[] = alertHist.map(a => {
+      const alertTs = new Date(a.triggeredAt).getTime();
+      // Find the closest telemetry index by timestamp
+      let closestIdx = 0;
+      let minDiff = Infinity;
+      for (let i = 0; i < data.length; i++) {
+        const diff = Math.abs(new Date(data[i].timestamp).getTime() - alertTs);
+        if (diff < minDiff) { minDiff = diff; closestIdx = i; }
+      }
+      const sev = a.severity.toLowerCase();
+      return {
+        position: closestIdx / (n - 1),
+        label: a.message,
+        color: sev === 'critical' ? '#ef4444' : sev === 'warning' ? '#eab308' : '#3b82f6',
+        severity: (sev === 'critical' || sev === 'warning' ? sev : 'info') as TimelineEvent['severity'],
+        index: closestIdx,
+        timestamp: a.triggeredAt,
+      };
+    });
+
+    // Phase-change markers from telemetry (always useful)
+    const phaseEvents: TimelineEvent[] = [];
+    let lastPhase = data[0].phase;
+    for (let i = 1; i < n; i++) {
+      const row = data[i];
+      if (row.phase && row.phase !== lastPhase) {
+        const label = row.phase === 'STATION_STOP' || row.phase === 'STOPPED'
+          ? 'Station Stop' : `Phase: ${row.phase}`;
+        phaseEvents.push({
+          position: i / (n - 1), label, color: '#64748b',
+          severity: 'info', index: i, timestamp: row.timestamp,
+        });
+        lastPhase = row.phase;
+      }
+    }
+
+    return [...alertEvents, ...phaseEvents].sort((a, b) => a.position - b.position);
+  }, [data, alertHist]);
 
   /* ── Current data row at playback cursor ────────────────── */
   const currentRow = data[currentIndex] ?? null;
@@ -403,17 +404,25 @@ export default function ReplayPage() {
   const healthCategory = currentHealth?.category ?? null;
   const healthInfo     = categoryToHealthInfo(healthCategory);
 
-  /* ── Alerts: events up to current cursor ────────────────── */
-  const replayAlerts = useMemo((): Alert[] => (
-    events
-      .filter(ev => ev.index <= currentIndex)
-      .map(ev => ({
-        message:   ev.label,
-        severity:  ev.severity,
-        timestamp: fmtTs(ev.timestamp),
+  /* ── Alerts visible up to current cursor position ─────── */
+  const replayAlerts = useMemo((): Alert[] => {
+    if (!data.length) return [];
+    const cursorTs = data[currentIndex]
+      ? new Date(data[currentIndex].timestamp).getTime()
+      : 0;
+
+    return alertHist
+      .filter(a => new Date(a.triggeredAt).getTime() <= cursorTs)
+      .map(a => ({
+        id: a.id,
+        message: a.message,
+        severity: (a.severity.toLowerCase() === 'critical' ? 'critical'
+          : a.severity.toLowerCase() === 'warning' ? 'warning' : 'info') as Alert['severity'],
+        timestamp: fmtTs(a.triggeredAt),
+        recommendation: a.recommendation,
       }))
-      .reverse()
-  ), [events, currentIndex]);
+      .reverse();
+  }, [alertHist, currentIndex, data]);
 
   /* ── Route/station progress at cursor ───────────────────── */
   const { stations, progressPercent, remainingKm } = useMemo(() => {
@@ -467,13 +476,15 @@ export default function ReplayPage() {
 
       const resolution = RANGE_MS[r] > 60 * 60_000 ? '1min' : 'raw';
 
-      const [rows, health] = await Promise.all([
+      const [rows, health, alerts] = await Promise.all([
         fetchHistory(locoId, fromIso, toIso, resolution),
         fetchHealthHistory(locoId, fromIso, toIso).catch(() => []),
+        fetchAlertHistory(locoId, fromIso, toIso).catch(() => []),
       ]);
 
       setData(rows as unknown as HistoryPoint[]);
       setHealthHist(health as unknown as HealthSnapshot[]);
+      setAlertHist(alerts);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load history');
     } finally {

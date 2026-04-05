@@ -1,15 +1,5 @@
-/* ═══════════════════════════════════════════════════════════
-   Alerts API
-   REST endpoint for fetching currently active alerts
-   (loaded once on dashboard mount, then kept live via WS).
-   ═══════════════════════════════════════════════════════════ */
+import { apiFetch, apiPost } from './client';
 
-import { apiFetch } from './client';
-
-/**
- * A single active alert from the backend.
- * Matches the shape returned by GET /api/v1/alerts/:id/active.
- */
 export interface ActiveAlert {
   id: string;
   severity: string;
@@ -18,17 +8,29 @@ export interface ActiveAlert {
   triggeredAt: string;
 }
 
-/**
- * GET /api/v1/alerts/{locomotiveId}/active
- *
- * Fetches the list of currently active (unresolved) alerts
- * for a locomotive. Called once when the Dashboard mounts;
- * subsequent alerts arrive via the WebSocket ALERT messages.
- */
-export function fetchActiveAlerts(
-  locomotiveId: string,
-): Promise<ActiveAlert[]> {
+/** GET /api/v1/alerts/{locomotiveId}/active */
+export function fetchActiveAlerts(locomotiveId: string): Promise<ActiveAlert[]> {
   return apiFetch<ActiveAlert[]>(
     `/api/v1/alerts/${encodeURIComponent(locomotiveId)}/active`,
+  );
+}
+
+/** GET /api/v1/alerts/{locomotiveId}/history?from=&to= */
+export function fetchAlertHistory(
+  locomotiveId: string,
+  from: string,
+  to: string,
+): Promise<ActiveAlert[]> {
+  const params = new URLSearchParams({ from, to });
+  return apiFetch<ActiveAlert[]>(
+    `/api/v1/alerts/${encodeURIComponent(locomotiveId)}/history?${params}`,
+  );
+}
+
+/** POST /api/v1/alerts/{id}/acknowledge */
+export function acknowledgeAlert(id: string): Promise<ActiveAlert> {
+  return apiPost<Record<string, never>, ActiveAlert>(
+    `/api/v1/alerts/${encodeURIComponent(id)}/acknowledge`,
+    {},
   );
 }
