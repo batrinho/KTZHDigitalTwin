@@ -134,10 +134,10 @@
   position: absolute;
   top: -5px;
   bottom: -5px;
-  width: 14px;
+  width: 18px;
   transform: translateX(-50%);
   cursor: pointer;
-  z-index: 2;
+  z-index: 4;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -156,16 +156,17 @@
   transform: scale(1.5);
 }
 
-/* Tooltip on hover */
+/* Tooltip — child of .tl-event-marker, appears above the dot */
 .tl-event-tooltip {
   position: absolute;
-  top: 20px;
+  bottom: calc(100% + 8px);
+  left: 50%;
   transform: translateX(-50%);
   background: var(--color-surface-raised);
   border: 1px solid var(--color-border);
   border-radius: 6px;
   padding: 6px 10px;
-  z-index: 10;
+  z-index: 20;
   pointer-events: none;
   white-space: nowrap;
   display: flex;

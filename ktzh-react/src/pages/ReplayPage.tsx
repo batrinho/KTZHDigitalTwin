@@ -153,6 +153,16 @@ function TimelineBar({
             onClick={() => onSeek(ev.index)}
           >
             <div className="tl-event-dot" style={{ background: ev.color }} />
+            {hoveredEvent === ev && (
+              <div className="tl-event-tooltip">
+                <span className="tl-event-tooltip__label" style={{ color: ev.color }}>
+                  {ev.label}
+                </span>
+                <span className="tl-event-tooltip__time">
+                  {fmtTs(ev.timestamp)}
+                </span>
+              </div>
+            )}
           </div>
         ))}
         <input
@@ -164,21 +174,6 @@ function TimelineBar({
           onChange={e => onSeek(Number(e.target.value))}
         />
       </div>
-
-      {/* Hovered event tooltip */}
-      {hoveredEvent && (
-        <div
-          className="tl-event-tooltip"
-          style={{ left: `${hoveredEvent.position * 100}%` }}
-        >
-          <span className="tl-event-tooltip__label" style={{ color: hoveredEvent.color }}>
-            {hoveredEvent.label}
-          </span>
-          <span className="tl-event-tooltip__time">
-            {fmtTs(hoveredEvent.timestamp)}
-          </span>
-        </div>
-      )}
 
       {/* Controls */}
       <div className="tl-controls">
