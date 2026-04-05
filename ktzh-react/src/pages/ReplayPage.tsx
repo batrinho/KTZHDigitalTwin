@@ -180,22 +180,6 @@ function TimelineBar({
         </div>
       )}
 
-      {/* Event labels */}
-      {events.length > 0 && (
-        <div className="tl-events-row">
-          {events.map((ev, i) => (
-            <button
-              key={i}
-              className="tl-event-label"
-              style={{ left: `${ev.position * 100}%`, color: ev.color }}
-              onClick={() => onSeek(ev.index)}
-            >
-              {ev.label}
-            </button>
-          ))}
-        </div>
-      )}
-
       {/* Controls */}
       <div className="tl-controls">
         <button className="tl-ctrl-btn" onClick={onRewind} title="Rewind to start">
